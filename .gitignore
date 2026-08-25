@@ -1,0 +1,56 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/
+
+# Next.js Build Artifacts
+/.next/
+/out/
+/build
+
+# Production & Local Environment Files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+*.env
+
+# Supabase Local
+/supabase/.temp
+/supabase/.branches
+
+# Vercel & Turborepo
+.vercel
+.turbo
+
+# Testing & Coverage
+/coverage
+/.nyc_output
+
+# Debug & Task Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# TypeScript Build Info
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# OS & Editor Files
+.DS_Store
+Thumbs.db
+*.pem
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea
+*.swp
+*.swo
