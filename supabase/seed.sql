@@ -30,15 +30,16 @@ ON CONFLICT (slug) DO NOTHING;
 -- 3. LEGACY URL REDIRECT PRESERVATION
 INSERT INTO public.redirects (source_path, destination_path, status_code)
 VALUES 
-    ('/index.html', '/', 301),
-    ('/blogs.html', '/blogs', 301),
-    ('/projects.html', '/projects', 301),
-    ('/members.html', '/members', 301),
-    ('/achievements.html', '/about', 301),
-    ('/ambassadors.html', '/ambassadors', 301),
-    ('/docs.html', '/docs', 301),
-    ('/about.html', '/about', 301),
-    ('/contact.html', '/contact', 301),
-    ('/privacy.html', '/privacy', 301),
-    ('/terms.html', '/terms', 301)
+    ('/index.html', '/', '301'),
+    ('/blogs.html', '/blogs', '301'),
+    ('/projects.html', '/projects', '301'),
+    ('/members.html', '/members', '301'),
+    ('/achievements.html', '/about', '301'),
+    ('/ambassadors.html', '/ambassadors', '301'),
+    ('/docs.html', '/docs', '301'),
+    ('/about.html', '/about', '301'),
+    ('/contact.html', '/contact', '301'),
+    ('/privacy.html', '/privacy', '301'),
+    ('/terms.html', '/terms', '301')
 ON CONFLICT (source_path) DO NOTHING;
+
