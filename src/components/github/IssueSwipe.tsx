@@ -1,6 +1,7 @@
 import React from 'react';
 import { GitPullRequest, Tag, ExternalLink } from 'lucide-react';
 import { GlowCard } from '@/components/content/GlowCard';
+import { logEvent } from '@/lib/utils/analytics';
 
 export interface GitHubIssue {
   id: number;
@@ -14,12 +15,19 @@ export interface GitHubIssue {
 
 interface IssueSwipeProps {
   issues?: GitHubIssue[];
+  projectId?: string;
 }
 
-export function IssueSwipe({ issues = [] }: IssueSwipeProps) {
+export function IssueSwipe({ issues = [], projectId }: IssueSwipeProps) {
   if (!issues || issues.length === 0) {
     return null;
   }
+
+  const handleIssueClick = () => {
+    if (projectId) {
+      logEvent('issue_click', projectId);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -39,7 +47,13 @@ export function IssueSwipe({ issues = [] }: IssueSwipeProps) {
                 <span>#{issue.id}</span>
               </div>
               <h4 className="font-mono-terminal text-sm font-bold text-white line-clamp-2">
-                <a href={issue.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                <a
+                  href={issue.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleIssueClick}
+                  className="hover:underline"
+                >
                   {issue.title}
                 </a>
               </h4>
@@ -63,9 +77,10 @@ export function IssueSwipe({ issues = [] }: IssueSwipeProps) {
                   href={issue.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={handleIssueClick}
                   className="font-mono-terminal text-xs font-bold text-[#22C55E] flex items-center gap-1 hover:underline"
                 >
-                  CLAIM_ISSUE <ExternalLink className="h-3 w-3" />
+                  CONTRIBUTE <ExternalLink className="h-3 w-3" />
                 </a>
               </div>
             </div>
@@ -75,3 +90,4 @@ export function IssueSwipe({ issues = [] }: IssueSwipeProps) {
     </div>
   );
 }
+

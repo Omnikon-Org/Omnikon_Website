@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 
 interface ReferralPageProps {
   params: Promise<{ slug: string }>;
@@ -10,8 +10,8 @@ export default async function ReferralPage({ params }: ReferralPageProps) {
   const sourcePath = `/r/${slug}`;
 
   try {
-    const supabase = await createClient();
-    const { data: redirectEntry } = await supabase
+    const supabaseAdmin = createAdminClient();
+    const { data: redirectEntry } = await supabaseAdmin
       .from('redirects')
       .select('destination_path, status_code')
       .eq('source_path', sourcePath)
@@ -20,7 +20,7 @@ export default async function ReferralPage({ params }: ReferralPageProps) {
     if (redirectEntry?.destination_path) {
       redirect(redirectEntry.destination_path);
     }
-  } catch {
+  } catch (err) {
     // If Supabase is unconfigured or no redirect entry exists, fallback to home root.
   }
 

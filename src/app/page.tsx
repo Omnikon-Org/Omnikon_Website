@@ -43,6 +43,8 @@ const DEVELOPER_JOURNEY_STAGES = [
     description: 'Access high-quality engineering tutorials, open-source guidelines, and community discord channels.',
     color: 'text-[#A1A1AA]',
     borderColor: 'border-[#27272A]',
+    actionLabel: 'EXPLORE_GUIDES',
+    actionHref: '/docs',
   },
   {
     stage: '02. LEARNER',
@@ -51,6 +53,8 @@ const DEVELOPER_JOURNEY_STAGES = [
     description: 'Read deep-dive tech articles, break down open-source codebases, and participate in hackathon workshops.',
     color: 'text-[#38BDF8]',
     borderColor: 'border-[#38BDF8]/40',
+    actionLabel: 'READ_TUTORIALS',
+    actionHref: '/blogs',
   },
   {
     stage: '03. BUILDER',
@@ -59,14 +63,18 @@ const DEVELOPER_JOURNEY_STAGES = [
     description: 'Ship full-stack applications, submit hackathon projects, and earn contributor reputation badges.',
     color: 'text-[#22C55E]',
     borderColor: 'border-[#22C55E]/40',
+    actionLabel: 'EXPLORE_REPOS',
+    actionHref: '/projects',
   },
   {
     stage: '04. CONTRIBUTOR',
     tier: 'contributor',
-    title: 'Author Technical Content & Pull Requests',
+    title: 'Author Pull Requests',
     description: 'Write peer-reviewed technical articles, claim good-first-issues, and review community submissions.',
     color: 'text-[#EAB308]',
     borderColor: 'border-[#EAB308]/40',
+    actionLabel: 'START_CONTRIBUTING',
+    actionHref: '/projects',
   },
   {
     stage: '05. MAINTAINER',
@@ -75,8 +83,11 @@ const DEVELOPER_JOURNEY_STAGES = [
     description: 'Lead core repository governance, mentor emerging builders, and publish official engineering standards.',
     color: 'text-[#FF3131]',
     borderColor: 'border-[#FF3131]/60',
+    actionLabel: 'CONNECT_LEADS',
+    actionHref: '/contact',
   },
 ];
+
 
 export default async function HomePage() {
   const [articles, projects, events, members, updates] = await Promise.all([
@@ -96,21 +107,21 @@ export default async function HomePage() {
       {/* 1. HERO SECTION */}
       <section className="space-y-8">
         <TerminalHeader
-          title="SYSTEM_ROOT"
-          subtitle="Premier Developer Ecosystem, Open-Source Accelerator, and Technical Knowledge Base for Modern Builders."
+          title="OMNIKON"
+          subtitle="Omnikon is a student-powered open-source developer community where you learn by building, contribute to real projects, participate in hackathons, and grow as a developer."
           action={
             <div className="flex flex-wrap items-center gap-3">
               <Link
-                href="/blogs"
+                href="/projects"
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-[#FF3131] text-white font-mono-terminal text-xs font-bold hover:bg-[#FF3131]/90 shadow-[0_0_20px_rgba(255,49,49,0.4)] transition-all"
               >
-                EXPLORE_BLOGS <ArrowRight className="h-4 w-4" />
+                EXPLORE_PROJECTS <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                href="/projects"
+                href="/login"
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-[#27272A] bg-[#0A0A0A] text-[#A1A1AA] hover:text-white hover:border-white font-mono-terminal text-xs font-bold transition-all"
               >
-                BROWSE_PROJECTS
+                JOIN_OMNIKON
               </Link>
             </div>
           }
@@ -120,13 +131,13 @@ export default async function HomePage() {
         <div className="rounded-xl border border-[#27272A] bg-gradient-to-r from-[#0A0A0A] via-[#121212] to-[#0A0A0A] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 font-mono-terminal text-xs text-[#FF3131] uppercase tracking-widest font-bold">
-              <Sparkles className="h-4 w-4 text-[#FF3131]" /> ARCHITECTED_FOR_ENGINEERING_EXCELLENCE
+              <Sparkles className="h-4 w-4 text-[#FF3131]" /> ARCHITECTED_FOR_GROWTH
             </div>
             <h2 className="font-mono-terminal text-xl sm:text-2xl font-extrabold text-white">
-              Zero-Fluff Technical Content & Open-Source Infrastructure
+              Zero-Fluff Technical Content & Student-First Open-Source Ecosystem
             </h2>
             <p className="font-sans text-xs sm:text-sm text-[#A1A1AA] max-w-3xl leading-relaxed">
-              Omnikon is engineered to eliminate noise. We publish peer-reviewed technical tutorials, host open-source hackathons, and connect developers directly to production codebases.
+              Omnikon is engineered to bridge the gap between classroom theory and production engineering. We host student-powered hackathons, publish peer-reviewed tech tutorials, and connect you directly to active, beginner-friendly repositories.
             </p>
           </div>
 
@@ -136,6 +147,50 @@ export default async function HomePage() {
             <div className="text-[#A1A1AA]">LICENSE: <span className="text-[#38BDF8]">MIT_OPEN_SOURCE</span></div>
           </div>
         </div>
+
+        {/* Core Ecosystem Landmarks Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="p-5 rounded-xl border border-[#27272A] bg-[#0A0A0A] hover:border-[#FF3131]/60 transition-all space-y-2">
+            <div className="font-mono-terminal text-[10px] text-[#FF3131] tracking-widest font-bold">01. LEARN</div>
+            <h3 className="font-mono-terminal text-sm font-extrabold text-white uppercase">Technical Articles</h3>
+            <p className="font-sans text-xs text-[#A1A1AA] leading-relaxed">
+              Peer-reviewed tutorials, system architecture breakdowns, and clean coding guidelines.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-xl border border-[#27272A] bg-[#0A0A0A] hover:border-[#38BDF8]/60 transition-all space-y-2">
+            <div className="font-mono-terminal text-[10px] text-[#38BDF8] tracking-widest font-bold">02. BUILD</div>
+            <h3 className="font-mono-terminal text-sm font-extrabold text-white uppercase">Open Source Repos</h3>
+            <p className="font-sans text-xs text-[#A1A1AA] leading-relaxed">
+              Create real-world software, deploy tools, and turn engineering concepts into code.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-xl border border-[#27272A] bg-[#0A0A0A] hover:border-[#22C55E]/60 transition-all space-y-2">
+            <div className="font-mono-terminal text-[10px] text-[#22C55E] tracking-widest font-bold">03. CONTRIBUTE</div>
+            <h3 className="font-mono-terminal text-sm font-extrabold text-white uppercase">Pull Requests</h3>
+            <p className="font-sans text-xs text-[#A1A1AA] leading-relaxed">
+              Find good-first-issues, submit verified code reviews, and work alongside mentors.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-xl border border-[#27272A] bg-[#0A0A0A] hover:border-[#EAB308]/60 transition-all space-y-2">
+            <div className="font-mono-terminal text-[10px] text-[#EAB308] tracking-widest font-bold">04. COMPETE</div>
+            <h3 className="font-mono-terminal text-sm font-extrabold text-white uppercase">Hackathons</h3>
+            <p className="font-sans text-xs text-[#A1A1AA] leading-relaxed">
+              Participate in fast-paced competitions, solve tracks, and win developer rewards.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-xl border border-[#27272A] bg-[#0A0A0A] hover:border-[#A1A1AA]/60 transition-all space-y-2">
+            <div className="font-mono-terminal text-[10px] text-[#A1A1AA] tracking-widest font-bold">05. GROW</div>
+            <h3 className="font-mono-terminal text-sm font-extrabold text-white uppercase">Profile Badges</h3>
+            <p className="font-sans text-xs text-[#A1A1AA] leading-relaxed">
+              Earn developer journey tiers based on verified code contributions and site achievements.
+            </p>
+          </div>
+        </div>
+
       </section>
 
       {/* 2. LIVE OMNIKON METRICS (REAL DATABASE METRICS) */}
@@ -385,9 +440,18 @@ export default async function HomePage() {
                 </p>
               </div>
 
-              <div className="pt-2 border-t border-[#27272A] flex items-center justify-between">
-                <StatusBadge status={stg.tier} />
+              <div className="pt-2 border-t border-[#27272A] flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <StatusBadge status={stg.tier} />
+                </div>
+                <Link
+                  href={stg.actionHref}
+                  className="w-full text-center py-1.5 rounded border border-[#27272A] hover:border-white font-mono-terminal text-[10px] text-[#A1A1AA] hover:text-white transition-all"
+                >
+                  {stg.actionLabel} &rarr;
+                </Link>
               </div>
+
             </div>
           ))}
         </div>

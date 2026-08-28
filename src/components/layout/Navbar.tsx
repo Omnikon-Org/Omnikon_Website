@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Terminal, Menu, X, Shield, Code, Calendar, Users, BookOpen } from 'lucide-react';
+import { Terminal, Menu, X, Shield, Code, Calendar, Users, BookOpen, User as UserIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { createClient } from '@/lib/supabase/client';
 
 const NAV_ITEMS = [
   { name: 'Blogs & Articles', href: '/blogs', icon: BookOpen },
@@ -16,7 +17,25 @@ const NAV_ITEMS = [
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sessionUser, setSessionUser] = useState<any>(null);
   const pathname = usePathname();
+  const supabase = createClient();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSessionUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSessionUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
+
+  const dynamicAuthItem = sessionUser
+    ? { name: 'Dashboard', href: '/dashboard', icon: UserIcon }
+    : { name: 'Sign In', href: '/login', icon: UserIcon };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#27272A] bg-[#050505]/90 backdrop-blur-md">
@@ -56,6 +75,19 @@ export function Navbar() {
               </Link>
             );
           })}
+
+          <Link
+            href={dynamicAuthItem.href}
+            className={cn(
+              'font-mono-terminal text-xs font-medium px-3 py-2 rounded-md transition-all duration-150 flex items-center gap-2 border border-transparent',
+              pathname === dynamicAuthItem.href
+                ? 'text-white bg-[#121212] border-[#27272A] shadow-inner text-[#FF3131]'
+                : 'text-[#A1A1AA] hover:text-white hover:bg-[#0A0A0A] hover:border-[#27272A]'
+            )}
+          >
+            <dynamicAuthItem.icon className={cn('h-3.5 w-3.5', pathname === dynamicAuthItem.href ? 'text-[#FF3131]' : 'text-[#A1A1AA]')} />
+            {dynamicAuthItem.name}
+          </Link>
         </nav>
 
         {/* System Online Status Indicator */}
@@ -105,8 +137,23 @@ export function Navbar() {
               </Link>
             );
           })}
+
+          <Link
+            href={dynamicAuthItem.href}
+            onClick={() => setMobileMenuOpen(false)}
+            className={cn(
+              'font-mono-terminal text-sm font-medium px-4 py-3 rounded-md flex items-center gap-3 border',
+              pathname === dynamicAuthItem.href
+                ? 'bg-[#121212] text-[#FF3131] border-[#FF3131]/40'
+                : 'text-[#A1A1AA] hover:text-white border-[#27272A]'
+            )}
+          >
+            <dynamicAuthItem.icon className="h-4 w-4" />
+            {dynamicAuthItem.name}
+          </Link>
         </div>
       )}
     </header>
   );
 }
+

@@ -53,7 +53,7 @@ export default function LoginPage() {
         if (error) {
           setErrorMsg(error.message);
         } else {
-          router.push('/admin');
+          router.push('/dashboard');
           router.refresh();
         }
       }

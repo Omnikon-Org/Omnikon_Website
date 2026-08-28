@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getProjectBySlug } from '@/lib/data/projects';
+import { getGithubIssuesForRepo } from '@/lib/data/github';
+import { IssueSwipe } from '@/components/github/IssueSwipe';
 import { constructMetadata, generateBreadcrumbJsonLd, SITE_CONFIG } from '@/lib/seo/metadata';
 import { TerminalHeader } from '@/components/terminal/TerminalHeader';
 import { MDXRenderer } from '@/lib/mdx/renderer';
@@ -38,6 +40,8 @@ export default async function ProjectDetailPage({ params }: ProjectDetailProps) 
   if (!project) {
     notFound();
   }
+
+  const issues = await getGithubIssuesForRepo(project.github_repo_name);
 
   const projectJsonLd = {
     '@context': 'https://schema.org',
@@ -88,7 +92,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailProps) 
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#27272A] bg-[#0A0A0A] text-white font-mono-terminal text-xs font-bold hover:border-[#38BDF8] transition-all"
             >
-              <Github className="h-4 w-4" /> GITHUB_REPO
+              <Github className="h-4 w-4" /> VIEW_ON_GITHUB
             </a>
             {project.demo_url && (
               <a
@@ -137,7 +141,15 @@ export default async function ProjectDetailPage({ params }: ProjectDetailProps) 
         <MDXRenderer content={project.content_mdx} />
       </article>
 
+      {/* Dynamic Good First Issues List */}
+      {issues && issues.length > 0 && (
+        <div className="pt-6 border-t border-[#27272A]">
+          <IssueSwipe issues={issues} projectId={project.id} />
+        </div>
+      )}
+
       <AdSlot slotId="project-detail-ad" />
     </div>
   );
 }
+
