@@ -17,6 +17,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = constructMetadata({
   title: 'Engineering Blogs & Technical Tutorials',
   description: 'Deep-dive software engineering stories, architecture guides, and technical tutorials from Omnikon contributors.',
+  canonicalUrl: '/blogs',
 });
 
 interface BlogsPageProps {

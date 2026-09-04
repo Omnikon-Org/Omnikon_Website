@@ -15,6 +15,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = constructMetadata({
   title: 'Native Open Source Projects Explorer',
   description: 'Discover and contribute to official Omnikon open-source tools, infrastructure libraries, and hackathon projects.',
+  canonicalUrl: '/projects',
 });
 
 export default async function ProjectsPage() {

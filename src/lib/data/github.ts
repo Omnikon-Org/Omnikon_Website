@@ -20,8 +20,21 @@ export interface GitHubIssue {
   createdAt: string;
 }
 
+export interface GitHubOrgRepo {
+  id: number;
+  name: string;
+  fullName: string;
+  description: string;
+  htmlUrl: string;
+  starsCount: number;
+  forksCount: number;
+  openIssuesCount: number;
+  language: string | null;
+  topics: string[];
+  updatedAt: string;
+}
+
 export async function getCachedGitHubData(key: string): Promise<Record<string, unknown> | null> {
-  // If service role key is unconfigured, return null safely
   if (!env.supabaseServiceRoleKey) {
     return null;
   }
@@ -34,42 +47,32 @@ export async function getCachedGitHubData(key: string): Promise<Record<string, u
       .eq('key', key)
       .maybeSingle();
 
-    if (error) {
-      console.error(`Failed to read github_cache for key ${key}:`, error.message);
+    if (error || !data) {
       return null;
     }
 
-    if (!data) {
-      return null;
+    if (data.expires_at && new Date(data.expires_at) > new Date()) {
+      return data.data;
     }
 
-    return data.data;
+    return null;
   } catch (err) {
     console.error(`Unexpected error reading github_cache for key ${key}:`, err);
     return null;
   }
 }
 
-export async function getGithubIssuesForRepo(repoName: string): Promise<GitHubIssue[]> {
+export async function getGithubIssuesForRepo(
+  repoName: string,
+  labels: string[] = ['good first issue', 'help wanted']
+): Promise<GitHubIssue[]> {
   const cacheKey = `repo_issues_${repoName}`;
   const cacheTtlSeconds = 3600; // 1 hour
 
   // 1. Try reading cache
-  if (env.supabaseServiceRoleKey) {
-    try {
-      const adminSupabase = createAdminClient();
-      const { data: cacheRow } = await adminSupabase
-        .from('github_cache')
-        .select('data, expires_at')
-        .eq('key', cacheKey)
-        .maybeSingle();
-
-      if (cacheRow && cacheRow.expires_at && new Date(cacheRow.expires_at) > new Date()) {
-        return cacheRow.data as unknown as GitHubIssue[];
-      }
-    } catch (err) {
-      console.warn(`Cache read failed for issues of ${repoName}:`, err);
-    }
+  const cached = await getCachedGitHubData(cacheKey);
+  if (cached && Array.isArray(cached)) {
+    return cached as GitHubIssue[];
   }
 
   // 2. Fetch fresh issues from GitHub
@@ -83,8 +86,9 @@ export async function getGithubIssuesForRepo(repoName: string): Promise<GitHubIs
       headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
     }
 
+    const labelParam = encodeURIComponent(labels.join(','));
     const response = await fetch(
-      `https://api.github.com/repos/Omnikon-Org/${repoName}/issues?labels=good%20first%20issue&state=open&per_page=10`,
+      `https://api.github.com/repos/Omnikon-Org/${repoName}/issues?labels=${labelParam}&state=open&per_page=10`,
       { headers, next: { revalidate: 3600 } }
     );
 
@@ -133,4 +137,3 @@ export async function getGithubIssuesForRepo(repoName: string): Promise<GitHubIs
     return [];
   }
 }
-

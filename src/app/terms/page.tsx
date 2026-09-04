@@ -6,6 +6,7 @@ import { TerminalHeader } from '@/components/terminal/TerminalHeader';
 export const metadata: Metadata = constructMetadata({
   title: 'Terms of Service',
   description: 'Omnikon Organization Terms of Service and community code of conduct.',
+  canonicalUrl: '/terms',
 });
 
 export default function TermsPage() {

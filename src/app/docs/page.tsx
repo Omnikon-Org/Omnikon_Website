@@ -8,6 +8,7 @@ import { BookOpen, Shield, Code, GitPullRequest } from 'lucide-react';
 export const metadata: Metadata = constructMetadata({
   title: 'Community Guidelines & Technical Documentation',
   description: 'Official documentation, open-source contribution guidelines, and governance standards for Omnikon.',
+  canonicalUrl: '/docs',
 });
 
 export default function DocsPage() {

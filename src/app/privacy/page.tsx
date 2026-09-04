@@ -6,6 +6,7 @@ import { TerminalHeader } from '@/components/terminal/TerminalHeader';
 export const metadata: Metadata = constructMetadata({
   title: 'Privacy Policy',
   description: 'Omnikon Organization Privacy Policy, data protection practices, and user privacy rights.',
+  canonicalUrl: '/privacy',
 });
 
 export default function PrivacyPage() {

@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { TerminalHeader } from '@/components/terminal/TerminalHeader';
 import { GlowCard } from '@/components/content/GlowCard';
 import { Terminal, Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react';
+import { logEvent } from '@/lib/utils/analytics';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -28,7 +29,7 @@ export default function LoginPage() {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -43,6 +44,9 @@ export default function LoginPage() {
           setErrorMsg(error.message);
         } else {
           setInfoMsg('Account created successfully! Check your email for confirmation or sign in.');
+          if (data?.user) {
+            logEvent('signup', data.user.id);
+          }
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({

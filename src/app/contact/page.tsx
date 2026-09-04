@@ -9,6 +9,7 @@ import { SITE_CONFIG } from '@/lib/seo/metadata';
 export const metadata: Metadata = constructMetadata({
   title: 'Contact Us & Community Channels',
   description: 'Get in touch with the Omnikon Core Team, join our Discord community, or open an issue on GitHub.',
+  canonicalUrl: '/contact',
 });
 
 export default function ContactPage() {

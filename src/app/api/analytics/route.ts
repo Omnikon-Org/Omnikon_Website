@@ -7,15 +7,25 @@ export const dynamic = 'force-dynamic';
 const VALID_EVENT_TYPES = [
   'project_view',
   'project_github_click',
+  'issue_view',
   'issue_click',
+  'contribution_cta_click',
   'article_view',
   'event_view',
+  'event_registration_started',
+  'event_registration_completed',
   'signup',
   'primary_cta_click',
+  'search_performed',
+  'search_result_clicked',
+  // Phase 10 engagement events
+  'quiz_view',
+  'quiz_started',
+  'quiz_completed',
+  'hackathon_view',
+  'problem_statement_view',
+  'calendar_view',
 ];
-
-// Reusable static namespace UUID for global click events that lack direct entity association
-const GLOBAL_EVENT_UUID = '00000000-0000-0000-0000-000000000000';
 
 export async function POST(req: NextRequest) {
   try {

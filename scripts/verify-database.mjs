@@ -1,4 +1,4 @@
-// Omnikon 2.0 — Local Database Migration Introspection & Verification Script (v3 Reconciled)
+// Omnikon 2.0 — Local Database Migration Introspection & Verification Script (v5 Phase 10 Reconciled)
 // File: scripts/verify-database.mjs
 // Usage: node scripts/verify-database.mjs
 
@@ -9,16 +9,22 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const MIGRATION_PATH = path.resolve(__dirname, '../supabase/migrations/0001_initial_schema.sql');
+const MIGRATIONS_DIR = path.resolve(__dirname, '../supabase/migrations');
 
-console.log('🔍 Starting Omnikon 2.0 Database Migration Verification Audit (v3 Reconciled)...\n');
+console.log('🔍 Starting Omnikon 2.0 Database Migration Verification Audit (v5 Phase 10 Reconciled)...\n');
 
-if (!fs.existsSync(MIGRATION_PATH)) {
-  console.error(`❌ Migration file not found at: ${MIGRATION_PATH}`);
+if (!fs.existsSync(MIGRATIONS_DIR)) {
+  console.error(`❌ Migration directory not found at: ${MIGRATIONS_DIR}`);
   process.exit(1);
 }
 
-const sql = fs.readFileSync(MIGRATION_PATH, 'utf-8');
+const migrationFiles = fs.readdirSync(MIGRATIONS_DIR).filter((f) => f.endsWith('.sql')).sort();
+console.log(`Found ${migrationFiles.length} migration files: ${migrationFiles.join(', ')}`);
+
+let sql = '';
+migrationFiles.forEach((file) => {
+  sql += '\n' + fs.readFileSync(path.join(MIGRATIONS_DIR, file), 'utf-8');
+});
 
 const EXPECTED_TABLES = [
   'profiles',
@@ -42,6 +48,13 @@ const EXPECTED_TABLES = [
   'github_cache',
   'audit_logs',
   'view_logs',
+  'contributions',
+  'event_registrations',
+  'hackathon_problem_statements',
+  'quizzes',
+  'quiz_questions',
+  'quiz_attempts',
+  'quiz_answers',
 ];
 
 const EXPECTED_ENUMS = [
@@ -64,7 +77,7 @@ const EXPECTED_FUNCTIONS = [
 let errors = [];
 
 // 1. Verify Expected Tables
-console.log('--- 1. Table Definitions Check ---');
+console.log('\n--- 1. Table Definitions Check ---');
 EXPECTED_TABLES.forEach((table) => {
   const pattern = new RegExp(`CREATE TABLE IF NOT EXISTS ${table}\\b|CREATE TABLE ${table}\\b`, 'i');
   if (pattern.test(sql)) {
@@ -75,7 +88,7 @@ EXPECTED_TABLES.forEach((table) => {
   }
 });
 
-// 2. Verify RLS Enablement on All 21 Tables
+// 2. Verify RLS Enablement on All 23 Tables
 console.log('\n--- 2. Row Level Security (RLS) Enablement Check ---');
 EXPECTED_TABLES.forEach((table) => {
   const pattern = new RegExp(`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY`, 'i');
@@ -99,7 +112,7 @@ EXPECTED_ENUMS.forEach((enumType) => {
   }
 });
 
-// 4. Verify Workflow Function Check (enforce_content_publication_workflow or enforce_publication_workflow)
+// 4. Verify Workflow Function Check
 console.log('\n--- 4. Publication Workflow Function Check ---');
 if (/enforce_content_publication_workflow|enforce_publication_workflow/i.test(sql)) {
   console.log('  ✓ Content publication workflow function is defined.');
@@ -136,7 +149,7 @@ GIN_INDEXES.forEach((idx) => {
 // Final Audit Summary
 console.log('\n==================================================');
 if (errors.length === 0) {
-  console.log('✅ DATABASE VERIFICATION PASSED: All 21 tables, ENUMs, RLS rules, helper functions, and indexes are valid!');
+  console.log(`✅ DATABASE VERIFICATION PASSED: All ${EXPECTED_TABLES.length} tables, ENUMs, RLS rules, helper functions, and indexes are valid!`);
   process.exit(0);
 } else {
   console.error(`❌ DATABASE VERIFICATION FAILED: Found ${errors.length} issues.`);

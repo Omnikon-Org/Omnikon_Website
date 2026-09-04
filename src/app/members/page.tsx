@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { constructMetadata } from '@/lib/seo/metadata';
 import { getPublicProfiles } from '@/lib/data/profiles';
 import { TerminalHeader } from '@/components/terminal/TerminalHeader';
@@ -8,13 +9,14 @@ import { GlowCard } from '@/components/content/GlowCard';
 import { StatusBadge } from '@/components/terminal/StatusBadge';
 import { EmptyState } from '@/components/content/EmptyState';
 import { AdSlot } from '@/components/ads/AdSlot';
-import { Github, Disc as Discord, User, ShieldCheck } from 'lucide-react';
+import { Github, Disc as Discord, User, ShieldCheck, ChevronRight } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = constructMetadata({
   title: 'Community Member & Contributor Directory',
   description: 'Explore the network of Omnikon builders, contributors, campus ambassadors, and core maintainers.',
+  canonicalUrl: '/members',
 });
 
 export default async function MembersPage() {
@@ -47,7 +49,10 @@ export default async function MembersPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#27272A] bg-[#121212] font-mono-terminal text-sm font-bold text-[#FF3131]">
+                  <Link
+                    href={`/profile/${member.username}`}
+                    className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#27272A] bg-[#121212] font-mono-terminal text-sm font-bold text-[#FF3131] hover:border-[#FF3131] transition-colors"
+                  >
                     {member.avatar_url ? (
                       <Image
                         src={member.avatar_url}
@@ -59,13 +64,15 @@ export default async function MembersPage() {
                     ) : (
                       <User className="h-5 w-5" />
                     )}
-                  </div>
+                  </Link>
                   <div>
-                    <h3 className="font-mono-terminal text-base font-bold text-white">
-                      {member.full_name}
+                    <h3 className="font-mono-terminal text-base font-bold text-white hover:text-[#38BDF8] transition-colors">
+                      <Link href={`/profile/${member.username}`}>{member.full_name}</Link>
                     </h3>
                     <p className="font-mono-terminal text-xs text-[#A1A1AA]">
-                      @{member.username}
+                      <Link href={`/profile/${member.username}`} className="hover:underline">
+                        @{member.username}
+                      </Link>
                     </p>
                   </div>
                 </div>
@@ -75,6 +82,22 @@ export default async function MembersPage() {
                     {member.bio}
                   </p>
                 )}
+
+                {/* Skills Preview */}
+                {member.skills && member.skills.length > 0 && (
+                  <div className="flex flex-wrap gap-1 pt-1">
+                    {member.skills.slice(0, 3).map((skill) => (
+                      <span key={skill} className="rounded border border-[#27272A] bg-[#121212] px-2 py-0.5 font-mono-terminal text-[10px] text-[#A1A1AA]">
+                        {skill}
+                      </span>
+                    ))}
+                    {member.skills.length > 3 && (
+                      <span className="font-mono-terminal text-[10px] text-[#A1A1AA] self-center">
+                        +{member.skills.length - 3} more
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Public Handles */}
@@ -83,7 +106,7 @@ export default async function MembersPage() {
                   ROLE: <span className="text-white">{member.role}</span>
                 </span>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   {member.github_username && (
                     <a
                       href={`https://github.com/${member.github_username}`}
@@ -100,6 +123,12 @@ export default async function MembersPage() {
                       <Discord className="h-3.5 w-3.5" />
                     </span>
                   )}
+                  <Link
+                    href={`/profile/${member.username}`}
+                    className="text-[#38BDF8] hover:underline flex items-center gap-0.5 text-[11px] font-bold"
+                  >
+                    PROFILE <ChevronRight className="h-3 w-3" />
+                  </Link>
                 </div>
               </div>
             </GlowCard>

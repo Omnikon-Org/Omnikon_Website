@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 import { GitPullRequest, Tag, ExternalLink } from 'lucide-react';
 import { GlowCard } from '@/components/content/GlowCard';
 import { logEvent } from '@/lib/utils/analytics';
@@ -19,6 +21,12 @@ interface IssueSwipeProps {
 }
 
 export function IssueSwipe({ issues = [], projectId }: IssueSwipeProps) {
+  useEffect(() => {
+    if (projectId && issues.length > 0) {
+      logEvent('issue_view', projectId);
+    }
+  }, [projectId, issues.length]);
+
   if (!issues || issues.length === 0) {
     return null;
   }
@@ -80,7 +88,7 @@ export function IssueSwipe({ issues = [], projectId }: IssueSwipeProps) {
                   onClick={handleIssueClick}
                   className="font-mono-terminal text-xs font-bold text-[#22C55E] flex items-center gap-1 hover:underline"
                 >
-                  CONTRIBUTE <ExternalLink className="h-3 w-3" />
+                  VIEW ISSUE <ExternalLink className="h-3 w-3" />
                 </a>
               </div>
             </div>
@@ -90,4 +98,3 @@ export function IssueSwipe({ issues = [], projectId }: IssueSwipeProps) {
     </div>
   );
 }
-

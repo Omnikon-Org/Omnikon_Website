@@ -1,58 +1,77 @@
-# Omnikon 2.0 — Phase 7 Database Content Audit
+# Omnikon 2.0 — Phase 7 Database & Ecosystem Content Audit
 
-This document records the exact row metrics and record states for all database tables on the live remote Supabase instance (`ap-northeast-2` region). It outlines missing content requirements and defines the checklist for the Omnikon team.
+This document records the exact row metrics, schema configurations, and record states for all database tables on the live remote Supabase instance (`ap-northeast-2` region). It delineates real existing production content, missing content, and content requiring manual human creation.
 
 ---
 
-## 1. Content Audit Summary
+## 1. Live Database Inspection & Metrics
 
-| Database Table | Rows Found | Content Status | Content Type / Description |
+| Database Table | Live Rows | Status | Schema Purpose / Content Type |
 | :--- | :---: | :---: | :--- |
-| `profiles` | **0** | EMPTY | Community member / developer profiles |
-| `profile_private` | **0** | EMPTY | Personal contact, email, and address info |
-| `articles` | **0** | EMPTY | Technical blogs, guides, and engineering tutorials |
-| `projects` | **0** | EMPTY | Open-source repositories and tools Explorer |
-| `events` | **0** | EMPTY | Hackathons, workshops, and competitions |
-| `event_recaps` | **0** | EMPTY | Summaries and winners from completed events |
-| `updates` | **0** | EMPTY | Technical launch and community release updates |
-| `categories` | **5** | SEEDED | Web Dev, AI/ML, Open Source, Hackathons, Tutorials |
-| `tags` | **10** | SEEDED | Tech stacks (Next.js, TS, React, Supabase, Python, etc.) |
-| `redirects` | **11** | SEEDED | Legacy URL preservation mappings (e.g. `/blogs.html` &rarr; `/blogs`) |
+| `profiles` | **0** | Missing | Developer profiles (username, full_name, avatar, bio, tier, role) |
+| `profile_private` | **0** | Missing | Private contact information & emails |
+| `articles` | **0** | Missing | Technical blogs, system architecture tutorials, engineering breakdowns |
+| `projects` | **0** | Missing | Native open-source repositories & tools catalog |
+| `events` | **0** | Missing | Hackathons, workshops, competitions, meetups |
+| `event_recaps` | **0** | Missing | Completed hackathon winner recaps and showcase entries |
+| `updates` | **0** | Missing | Technical announcements & release updates |
+| `categories` | **5** | **Seeded** | Core taxonomy: Web Dev, AI/ML, Open Source, Hackathons, Tutorials |
+| `tags` | **10** | **Seeded** | Technology taxonomy: Next.js, TS, React, Supabase, Python, etc. |
+| `redirects` | **11** | **Seeded** | Preserved legacy route mappings (e.g., `/blogs.html` &rarr; `/blogs`) |
+| `view_logs` | **0** | **Ready** | Privacy-conscious interaction analytics logs (RLS enabled, admin-only write) |
+| `audit_logs` | **0** | **Ready** | Immutable CMS & administrative action logs |
+| `github_cache` | **0** | **Ready** | GitHub organization API responses cache |
+| Junction Tables (8) | **0** | **Ready** | `article_tags`, `project_tags`, `event_tags`, `article_projects`, etc. |
 
 ---
 
-## 2. Identified Content Gaps & Requirements
+## 2. Content Categorization
 
-Since the main directories (`/blogs`, `/projects`, `/events`, `/members`, `/admin`) are currently empty of live data, the frontend renders standard fallback `<EmptyState />` templates. To make the platform feel alive and genuinely useful to new visitors, the following foundational production content is required.
-
-> [!IMPORTANT]
-> In compliance with security and audit guidelines, **NO fabricated data** (fake users, fake repositories, mock comments, simulated hackathon winners, or imaginary star counts) shall be seeded or displayed in production.
-
-### A. Profiles Content Requirement
-- **Maintainer Profiles**: At least 2 profiles representing core organizers/mentors of Omnikon.
-  - Required fields: Name, Avatar, Bio, Role (`admin` or `editor`), Developer Tier (`maintainer`), GitHub username.
-- **Member Profiles**: A way for actual student members to sign up and populate the directory via standard onboarding.
-
-### B. Projects Content Requirement
-- **Omnikon Monolith Repository**: 1 entry representing the official open-source website project explorer.
-  - Required fields: Name, Slug (`omnikon-website-v2`), Summary, MDX details body, GitHub Repository URL (`https://github.com/Omnikon-Org/Omnikon_Website`), Tech Stack (`['Next.js', 'TypeScript', 'Tailwind CSS', 'Supabase']`), Status (`published`).
-
-### C. Events Content Requirement
-- **Active / Upcoming Event**: At least 1 real upcoming hackathon or accelerator session.
-  - Required fields: Name, Description, Date, Status (`active` or `upcoming`), Registration link.
-- **Legacy / Completed Event**: At least 1 past hackathon showing problem statements and tracks.
-
-### D. Articles Content Requirement
-- **Foundational Tutorials**: At least 2 high-quality, peer-reviewed technical tutorials.
-  - Required topics: Next.js App Router optimization, Supabase RLS design patterns, or Git collaboration guides.
+### A. Real Existing Production Content
+1. **Taxonomy Categories (5 Records)**:
+   - `Web Development` (`web-dev`)
+   - `AI & Machine Learning` (`ai-ml`)
+   - `Open Source Ecosystems` (`open-source`)
+   - `Hackathons & Competitions` (`hackathons`)
+   - `Engineering Tutorials` (`tutorials`)
+2. **Taxonomy Tags (10 Records)**:
+   - `Next.js`, `TypeScript`, `Tailwind CSS`, `Supabase`, `React`, `Python`, `Node.js`, `PostgreSQL`, `GraphQL`, `Docker`.
+3. **Legacy URL Preservation Redirects (11 Records)**:
+   - Directs legacy HTML and legacy URL paths (`/blogs.html`, `/events.html`, `/projects.html`, etc.) to clean Next.js App Router canonical routes.
 
 ---
 
-## 3. Legitimacy Verification Checklist
+### B. Missing Content
+- **Developer Profiles**: No member or maintainer profiles exist in `profiles`.
+- **Open-Source Projects**: No repositories are registered in `projects`.
+- **Technical Articles**: No engineering guides or tutorials exist in `articles`.
+- **Hackathons & Events**: No active, upcoming, or completed events exist in `events`.
+- **Event Recaps**: No past hackathon winner entries exist in `event_recaps`.
+- **System Updates**: No announcements exist in `updates`.
 
-Before publishing or seeding any record on the Cloud database:
-- [ ] Confirm all profile IDs match real auth users.
-- [ ] Confirm GitHub repository URLs point to actual active public repositories in the `Omnikon-Org` organization.
-- [ ] Ensure that open-source issues rendered in the UI match actual open issues retrieved from the GitHub API.
-- [ ] Verify that all event registration targets and dates are actual dates (no dummy placeholders).
-- [ ] Audit that no AI-generated filler copy exists in articles or tutorials.
+---
+
+### C. Content Requiring Manual Human Creation
+
+To activate each section without placeholder or fabricated data, the following verified real content must be created by the Omnikon team:
+
+1. **Maintainer Profiles (Admin / Editor)**:
+   - Require real authenticated users registered through Supabase Auth.
+   - Core organizer/maintainer profiles with actual GitHub usernames, avatars, and bios.
+2. **Omnikon Monolith Repository Registration**:
+   - Register the official open-source website project (`Omnikon-Org/Omnikon_Website`) with genuine summary, tech stack (`['Next.js', 'TypeScript', 'Tailwind CSS', 'Supabase']`), and MDX architecture documentation.
+3. **Verified Hackathon / Workshop Announcements**:
+   - At least 1 legitimate upcoming hackathon with actual dates, tracks, and official registration URLs.
+4. **Peer-Reviewed Engineering Tutorials**:
+   - High-value technical guides (e.g., "Designing Scalable Row Level Security in Supabase", "App Router Architecture in Next.js 15") authored by real developers.
+
+---
+
+## 3. Strict Anti-Fabrication Declarations
+
+In strict adherence to the project standards and Phase 7 requirements:
+- **NO Fake Users / Contributors**: Zero synthetic profile accounts will be inserted.
+- **NO Fake Star Counts / GitHub Metrics**: All GitHub statistics must derive from live GitHub API metrics or real repository states.
+- **NO Fabricated Hackathons or Winner Recaps**: All competition data must represent actual verified events.
+- **NO Ghost Articles**: No articles will be attributed to fictitious personas or generated as filler copy.
+- **Intentional Empty States**: While database rows are 0, all user-facing directories (`/blogs`, `/projects`, `/events`, `/members`) display intentional, styled `<EmptyState />` UI components explaining that real published items will appear once created.

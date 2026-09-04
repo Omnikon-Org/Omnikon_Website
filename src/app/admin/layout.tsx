@@ -2,7 +2,7 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { Shield, FileText, Code, Clock, LogOut, Lock } from 'lucide-react';
+import { Shield, FileText, Code, Clock, LogOut, Lock, BarChart3, Calendar, Zap } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -69,16 +69,34 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Clock className="h-4 w-4 text-[#38BDF8]" /> Dashboard
           </Link>
           <Link
+            href="/admin/events"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-md text-[#A1A1AA] hover:text-white hover:bg-[#121212] transition-colors"
+          >
+            <Calendar className="h-4 w-4 text-[#22C55E]" /> Events & Hackathons
+          </Link>
+          <Link
+            href="/admin/quizzes"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-md text-[#A1A1AA] hover:text-white hover:bg-[#121212] transition-colors"
+          >
+            <Zap className="h-4 w-4 text-[#FF3131]" /> Technical Quizzes
+          </Link>
+          <Link
             href="/admin/articles"
             className="flex items-center gap-2.5 px-3 py-2 rounded-md text-[#A1A1AA] hover:text-white hover:bg-[#121212] transition-colors"
           >
-            <FileText className="h-4 w-4 text-[#FF3131]" /> Article Management
+            <FileText className="h-4 w-4 text-[#EAB308]" /> Article Management
           </Link>
           <Link
             href="/admin/projects"
             className="flex items-center gap-2.5 px-3 py-2 rounded-md text-[#A1A1AA] hover:text-white hover:bg-[#121212] transition-colors"
           >
-            <Code className="h-4 w-4 text-[#22C55E]" /> Open Source Projects
+            <Code className="h-4 w-4 text-[#38BDF8]" /> Open Source Projects
+          </Link>
+          <Link
+            href="/admin/analytics"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-md text-[#A1A1AA] hover:text-white hover:bg-[#121212] transition-colors"
+          >
+            <BarChart3 className="h-4 w-4 text-[#22C55E]" /> Telemetry & Analytics
           </Link>
           {profile.role === 'admin' && (
             <Link

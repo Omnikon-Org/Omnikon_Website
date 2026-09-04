@@ -3,13 +3,16 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getArticleBySlug } from '@/lib/data/articles';
+import { getRelatedArticles, getRelatedProjects } from '@/lib/data/recommendations';
 import { constructMetadata, generateBreadcrumbJsonLd, SITE_CONFIG } from '@/lib/seo/metadata';
 import { TerminalHeader } from '@/components/terminal/TerminalHeader';
 import { StatusBadge } from '@/components/terminal/StatusBadge';
 import { MDXRenderer } from '@/lib/mdx/renderer';
+import { RelatedContent } from '@/components/discovery/RelatedContent';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { formatDate } from '@/lib/utils';
 import { Clock, User, ArrowLeft, Tag as TagIcon, Eye } from 'lucide-react';
+import { ViewLogger } from '@/components/analytics/ViewLogger';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,6 +47,12 @@ export default async function ArticleDetailPage({ params }: ArticleDetailProps) 
   }
 
   const canonicalUrl = article.canonical_url || `${SITE_CONFIG.url}/blogs/${article.slug}`;
+
+  // Fetch related content concurrently
+  const [relatedArticles, relatedProjects] = await Promise.all([
+    getRelatedArticles(article.id, article.category_id),
+    getRelatedProjects(article.id),
+  ]);
 
   // Structured Data JSON-LD
   const articleJsonLd = {
@@ -81,6 +90,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailProps) 
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <ViewLogger entityType="article_view" entityId={article.id} />
       {/* Inject Structured Data JSON-LD */}
       <script
         type="application/ld+json"
@@ -138,6 +148,9 @@ export default async function ArticleDetailPage({ params }: ArticleDetailProps) 
       <article className="rounded-xl border border-[#27272A] bg-[#0A0A0A] p-6 sm:p-10 leading-relaxed space-y-4">
         <MDXRenderer content={article.content_mdx} />
       </article>
+
+      {/* Contextual Recommendations Widget */}
+      <RelatedContent articles={relatedArticles} projects={relatedProjects} />
 
       {/* Policy Compliant AdSlot */}
       <AdSlot slotId="article-detail-ad" />
