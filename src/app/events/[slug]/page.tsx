@@ -14,6 +14,7 @@ import { GlowCard } from '@/components/content/GlowCard';
 import { RelatedContent } from '@/components/discovery/RelatedContent';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { EventRegistrationButton } from '@/components/events/EventRegistrationButton';
+import { HackathonHighlightsSection } from '@/components/events/HackathonHighlightsSection';
 import { formatDate } from '@/lib/utils';
 import { 
   Calendar, 
@@ -165,6 +166,16 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
           </span>
         </div>
       </div>
+
+      {/* Flagship Hackathon Dashboard, Winners & Ambassadors */}
+      {event.stats && event.winners && event.ambassadors && (
+        <HackathonHighlightsSection
+          stats={event.stats}
+          winners={event.winners}
+          ambassadors={event.ambassadors}
+          unstopUrl={event.registration_url || 'https://unstop.com/hackathons/omnikon-national-hackathon-2026-omnikon-1715716'}
+        />
+      )}
 
       {/* Main Content & Overview */}
       <article className="rounded-xl border border-[#27272A] bg-[#0A0A0A] p-6 sm:p-10 leading-relaxed space-y-4 font-mono-terminal text-xs">

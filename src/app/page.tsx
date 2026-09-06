@@ -14,6 +14,7 @@ import { TerminalHeader } from '@/components/terminal/TerminalHeader';
 import { GlowCard } from '@/components/content/GlowCard';
 import { StatusBadge } from '@/components/terminal/StatusBadge';
 import { SectionHeader } from '@/components/content/SectionHeader';
+import { IssueSwipeShowcase } from '@/components/showcase/IssueSwipeShowcase';
 import { formatDate, formatNumber } from '@/lib/utils';
 import { 
   Terminal, 
@@ -464,6 +465,16 @@ export default async function HomePage() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* 4.5 MENTORSHIP ACHIEVEMENTS & ISSUESWIPE SHOWCASE */}
+      <section className="space-y-4">
+        <SectionHeader
+          tag="FLAGSHIP_PROJECTS"
+          title="Community Highlights & Mentorship Milestones"
+          description="Projects recognized across national open-source mentorship programs and flagship community tools."
+        />
+        <IssueSwipeShowcase />
       </section>
 
       {/* 5. OPEN SOURCE PROJECTS */}

@@ -7,6 +7,7 @@ interface EmptyStateProps {
   message?: string;
   actionLabel?: string;
   actionHref?: string;
+  onAction?: () => void;
 }
 
 export function EmptyState({
@@ -14,6 +15,7 @@ export function EmptyState({
   message = 'No data available in this directory.',
   actionLabel,
   actionHref,
+  onAction,
 }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center p-12 rounded-xl border border-[#27272A] bg-[#0A0A0A] text-center space-y-4">
@@ -35,6 +37,14 @@ export function EmptyState({
         >
           {actionLabel} <ArrowRight className="h-3.5 w-3.5" />
         </Link>
+      )}
+      {actionLabel && !actionHref && onAction && (
+        <button
+          onClick={onAction}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#38BDF8] text-black font-mono-terminal text-xs font-bold hover:bg-[#38BDF8]/90 transition-all shadow-[0_0_15px_rgba(56,189,248,0.3)]"
+        >
+          {actionLabel} <ArrowRight className="h-3.5 w-3.5" />
+        </button>
       )}
     </div>
   );

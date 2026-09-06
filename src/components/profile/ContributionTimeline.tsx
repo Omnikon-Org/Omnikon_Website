@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Contribution } from '@/lib/data/contributions';
 import { formatDate } from '@/lib/utils';
 import { 
@@ -10,7 +11,8 @@ import {
   Trophy, 
   Sparkles, 
   ExternalLink,
-  Code2
+  Code2,
+  User
 } from 'lucide-react';
 
 interface ContributionTimelineProps {
@@ -23,7 +25,7 @@ export function ContributionTimeline({ contributions = [] }: ContributionTimelin
       <div className="p-8 rounded-xl border border-[#27272A] bg-[#0A0A0A] text-center font-mono-terminal text-xs text-[#A1A1AA] space-y-2">
         <Code2 className="h-6 w-6 text-[#A1A1AA] mx-auto opacity-60" />
         <p className="font-bold text-white uppercase">NO_CONTRIBUTIONS_LOGGED</p>
-        <p>This developer has not logged public ecosystem contributions yet.</p>
+        <p>No community activity or repository contributions recorded yet.</p>
       </div>
     );
   }
@@ -71,16 +73,38 @@ export function ContributionTimeline({ contributions = [] }: ContributionTimelin
       {contributions.map((item) => (
         <div key={item.id} className="relative group">
           {/* Node Icon on Timeline */}
-          <div className="absolute -left-[27px] top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-[#27272A] bg-[#0A0A0A] group-hover:border-[#FF3131] transition-colors">
+          <div className="absolute -left-[27px] top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-[#27272A] bg-[#0A0A0A] group-hover:border-[#38BDF8] transition-colors">
             {getContributionIcon(item.type)}
           </div>
 
-          <div className="p-4 rounded-xl border border-[#27272A] bg-[#0A0A0A] hover:border-[#38BDF8]/40 transition-all space-y-2">
+          <div className="p-4 rounded-xl border border-[#27272A] bg-[#0A0A0A] hover:border-[#38BDF8]/40 transition-all space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className={`inline-flex items-center px-2 py-0.5 rounded border font-mono-terminal text-[10px] font-bold uppercase ${getBadgeColor(item.type)}`}>
                   {item.type.replace(/_/g, ' ')}
                 </span>
+
+                {/* Contributor Avatar & Username */}
+                {item.user && (
+                  <div className="flex items-center gap-1.5 font-mono-terminal text-xs text-white">
+                    {item.user.avatar_url ? (
+                      <div className="h-4 w-4 rounded-full overflow-hidden shrink-0 border border-[#27272A]">
+                        <Image
+                          src={item.user.avatar_url}
+                          alt={item.user.username || 'Contributor'}
+                          width={16}
+                          height={16}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <User className="h-3.5 w-3.5 text-[#A1A1AA]" />
+                    )}
+                    <span className="text-[#A1A1AA]">by</span>
+                    <span className="font-bold text-white">@{item.user.username}</span>
+                  </div>
+                )}
+
                 {item.project && (
                   <Link
                     href={`/projects/${item.project.slug}`}
@@ -99,12 +123,12 @@ export function ContributionTimeline({ contributions = [] }: ContributionTimelin
                 )}
               </div>
 
-              <span className="font-mono-terminal text-[11px] text-[#A1A1AA]">
+              <span className="font-mono-terminal text-[11px] text-[#71717A]">
                 {formatDate(item.created_at)}
               </span>
             </div>
 
-            <h4 className="font-mono-terminal text-sm font-bold text-white group-hover:text-[#38BDF8] transition-colors">
+            <h4 className="font-mono-terminal text-sm font-bold text-white group-hover:text-[#38BDF8] transition-colors leading-snug">
               {item.title}
             </h4>
 
@@ -115,14 +139,14 @@ export function ContributionTimeline({ contributions = [] }: ContributionTimelin
             )}
 
             {item.external_url && (
-              <div className="pt-2">
+              <div className="pt-1">
                 <a
                   href={item.external_url}
                   target={item.external_url.startsWith('http') ? '_blank' : '_self'}
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 font-mono-terminal text-xs font-bold text-[#38BDF8] hover:underline"
                 >
-                  VIEW_ACTIVITY <ExternalLink className="h-3 w-3" />
+                  VIEW_ON_GITHUB <ExternalLink className="h-3 w-3" />
                 </a>
               </div>
             )}

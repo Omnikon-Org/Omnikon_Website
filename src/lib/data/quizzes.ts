@@ -32,6 +32,9 @@ export interface Quiz {
   status: 'draft' | 'review' | 'published' | 'archived';
   author_id: string | null;
   is_featured: boolean;
+  external_url?: string | null;
+  badge_label?: string | null;
+  stats_summary?: string | null;
   created_at: string;
   updated_at: string;
   author?: Profile | null;
@@ -71,41 +74,63 @@ export interface LeaderboardEntry {
 }
 
 /**
+ * Official curated quizzes including the Frontend Quiz Milestone and Omnikon AI/ML Quiz Challenge
+ */
+export const OFFICIAL_CURATED_QUIZZES: Quiz[] = [
+  {
+    id: 'quiz-ai-ml-challenge-2026',
+    title: 'Omnikon AI/ML Challenge 2026: Foundations Quiz',
+    slug: 'ai-ml-challenge-2026',
+    description: 'Assess and validate your core machine learning mathematics, neural network architectures, PyTorch/TensorFlow paradigms, and LLM foundations on Unstop.',
+    category: 'AI_&_ML',
+    difficulty: 'Intermediate',
+    estimated_duration_minutes: 20,
+    pass_percentage: 70,
+    status: 'published',
+    author_id: null,
+    is_featured: true,
+    external_url: 'https://unstop.com/quiz/ai-ml-challenge-2026-foundations-quiz-omnikon-1729546',
+    badge_label: 'UNSTOP_COMPETITION',
+    stats_summary: 'National Machine Learning & Deep Learning Validation Challenge',
+    created_at: new Date('2026-08-15T00:00:00Z').toISOString(),
+    updated_at: new Date('2026-08-15T00:00:00Z').toISOString(),
+    question_count: 20,
+  },
+  {
+    id: 'quiz-frontend-quiz-arena',
+    title: 'Frontend Quiz: Omnikon Quiz Arena',
+    slug: 'frontend-quiz-arena',
+    description: 'The flagship Omnikon Quiz Arena assessment covering HTML5, modern CSS layouts, JavaScript ES2024 mechanics, React component architecture, and web performance.',
+    category: 'Frontend',
+    difficulty: 'Intermediate',
+    estimated_duration_minutes: 15,
+    pass_percentage: 70,
+    status: 'published',
+    author_id: null,
+    is_featured: true,
+    external_url: 'https://unstop.com/o/1729546',
+    badge_label: 'LEGACY_ARENA',
+    stats_summary: '1600+ Registrations · 168.9K Impressions · 264 Reviews · 71.4% Engineering',
+    created_at: new Date('2026-07-01T00:00:00Z').toISOString(),
+    updated_at: new Date('2026-07-01T00:00:00Z').toISOString(),
+    question_count: 25,
+  },
+];
+
+/**
  * Fetch all published quizzes with their question counts
+ * Only returns official Omnikon competitions hosted on Unstop
  */
 export async function getPublishedQuizzes(category?: string): Promise<Quiz[]> {
-  try {
-    const supabase = await createClient();
-    let query = supabase
-      .from('quizzes')
-      .select(`
-        *,
-        author:profiles!quizzes_author_id_fkey(id, username, full_name, avatar_url, role),
-        quiz_questions(count)
-      `)
-      .eq('status', 'published')
-      .order('is_featured', { ascending: false })
-      .order('created_at', { ascending: false });
-
-    if (category && category !== 'ALL') {
-      query = query.eq('category', category);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('Failed to fetch published quizzes:', error.message);
-      return [];
-    }
-
-    return (data || []).map((q: any) => ({
-      ...q,
-      question_count: q.quiz_questions?.[0]?.count || 0,
-    })) as Quiz[];
-  } catch (err) {
-    console.error('Unexpected error fetching quizzes:', err);
-    return [];
+  if (!category || category === 'ALL') {
+    return OFFICIAL_CURATED_QUIZZES;
   }
+
+  const catNorm = category.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return OFFICIAL_CURATED_QUIZZES.filter((curated) => {
+    const curNorm = curated.category.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return curNorm.includes(catNorm) || catNorm.includes(curNorm);
+  });
 }
 
 /**
@@ -113,6 +138,42 @@ export async function getPublishedQuizzes(category?: string): Promise<Quiz[]> {
  * Ensures zero client-side answer disclosure
  */
 export async function getQuizBySlugForClient(slug: string): Promise<QuizWithQuestionsClient | null> {
+  // Check curated first if it matches
+  const curatedMatch = OFFICIAL_CURATED_QUIZZES.find((q) => q.slug.toLowerCase() === slug.toLowerCase());
+  if (curatedMatch) {
+    return {
+      ...curatedMatch,
+      questions: [
+        {
+          id: `${curatedMatch.id}-q1`,
+          quiz_id: curatedMatch.id,
+          question_text: 'Which activation function is most commonly preferred in hidden layers of deep neural networks to mitigate vanishing gradients?',
+          options: [
+            { id: 'opt1', text: 'Sigmoid' },
+            { id: 'opt2', text: 'ReLU (Rectified Linear Unit)' },
+            { id: 'opt3', text: 'Tanh' },
+            { id: 'opt4', text: 'Linear' },
+          ],
+          difficulty: 'Intermediate',
+          order_index: 1,
+        },
+        {
+          id: `${curatedMatch.id}-q2`,
+          quiz_id: curatedMatch.id,
+          question_text: 'In Transformer architectures, what is the computational complexity of standard multi-head self-attention with respect to sequence length N?',
+          options: [
+            { id: 'opt1', text: 'O(N)' },
+            { id: 'opt2', text: 'O(N log N)' },
+            { id: 'opt3', text: 'O(N^2)' },
+            { id: 'opt4', text: 'O(1)' },
+          ],
+          difficulty: 'Advanced',
+          order_index: 2,
+        },
+      ],
+    };
+  }
+
   try {
     const supabase = await createClient();
     const { data: quiz, error: quizError } = await supabase
@@ -156,6 +217,45 @@ export async function getQuizBySlugForClient(slug: string): Promise<QuizWithQues
  * Server-only helper to fetch quiz with answers for grading
  */
 export async function getQuizWithAnswers(quizId: string): Promise<{ quiz: Quiz; questions: QuizQuestionFull[] } | null> {
+  const curatedMatch = OFFICIAL_CURATED_QUIZZES.find((q) => q.id === quizId);
+  if (curatedMatch) {
+    return {
+      quiz: curatedMatch,
+      questions: [
+        {
+          id: `${curatedMatch.id}-q1`,
+          quiz_id: curatedMatch.id,
+          question_text: 'Which activation function is most commonly preferred in hidden layers of deep neural networks to mitigate vanishing gradients?',
+          options: [
+            { id: 'opt1', text: 'Sigmoid' },
+            { id: 'opt2', text: 'ReLU (Rectified Linear Unit)' },
+            { id: 'opt3', text: 'Tanh' },
+            { id: 'opt4', text: 'Linear' },
+          ],
+          correct_option_id: 'opt2',
+          explanation: 'ReLU outputs 0 for negative values and the input directly for positive values, providing a derivative of 1 for positive values which prevents gradient saturation.',
+          difficulty: 'Intermediate',
+          order_index: 1,
+        },
+        {
+          id: `${curatedMatch.id}-q2`,
+          quiz_id: curatedMatch.id,
+          question_text: 'In Transformer architectures, what is the computational complexity of standard multi-head self-attention with respect to sequence length N?',
+          options: [
+            { id: 'opt1', text: 'O(N)' },
+            { id: 'opt2', text: 'O(N log N)' },
+            { id: 'opt3', text: 'O(N^2)' },
+            { id: 'opt4', text: 'O(1)' },
+          ],
+          correct_option_id: 'opt3',
+          explanation: 'Every token computes an attention score with every other token in the sequence of length N, resulting in an N x N matrix multiplication yielding O(N^2) complexity.',
+          difficulty: 'Advanced',
+          order_index: 2,
+        },
+      ],
+    };
+  }
+
   try {
     const adminSupabase = createAdminClient();
     const { data: quiz, error: quizError } = await adminSupabase
@@ -204,7 +304,7 @@ export async function getUserQuizAttempts(userId: string): Promise<QuizAttempt[]
       .order('completed_at', { ascending: false });
 
     if (error) {
-      console.error('Failed to fetch user quiz attempts:', error.message);
+      console.error(`Failed to fetch user quiz attempts:`, error.message);
       return [];
     }
 

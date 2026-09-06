@@ -8,6 +8,8 @@ import { GlowCard } from '@/components/content/GlowCard';
 import { StatusBadge } from '@/components/terminal/StatusBadge';
 import { EmptyState } from '@/components/content/EmptyState';
 import { AdSlot } from '@/components/ads/AdSlot';
+import { HackathonHighlightsSection } from '@/components/events/HackathonHighlightsSection';
+import { OFFICIAL_OMNIKON_NATIONAL_HACKATHON } from '@/lib/data/events';
 import { formatDate } from '@/lib/utils';
 import { 
   Calendar, 
@@ -101,6 +103,30 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           );
         })}
       </div>
+
+      {/* FLAGSHIP SHOWCASE: OMNIKON NATIONAL HACKATHON 2026 (STATS, WINNERS & AMBASSADORS) */}
+      {(type === 'ALL' || type === 'HACKATHON') && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between border-b border-[#FF3131]/40 pb-3">
+            <div className="flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-[#EAB308]" />
+              <h2 className="font-mono-terminal text-lg font-extrabold text-white uppercase tracking-wider">
+                Flagship Hackathon: Omnikon National Hackathon 2026
+              </h2>
+            </div>
+            <span className="font-mono-terminal text-xs text-[#EAB308] font-bold">
+              OFFICIAL_RESULTS_&_LEADERBOARD
+            </span>
+          </div>
+
+          <HackathonHighlightsSection
+            stats={OFFICIAL_OMNIKON_NATIONAL_HACKATHON.stats!}
+            winners={OFFICIAL_OMNIKON_NATIONAL_HACKATHON.winners!}
+            ambassadors={OFFICIAL_OMNIKON_NATIONAL_HACKATHON.ambassadors!}
+            unstopUrl={OFFICIAL_OMNIKON_NATIONAL_HACKATHON.registration_url!}
+          />
+        </section>
+      )}
 
       {!hasAnyEvents ? (
         <EmptyState

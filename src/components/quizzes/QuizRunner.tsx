@@ -16,7 +16,8 @@ import {
   RefreshCw, 
   AlertCircle, 
   Sparkles,
-  Award
+  Award,
+  ExternalLink
 } from 'lucide-react';
 
 interface QuizRunnerProps {
@@ -163,12 +164,14 @@ export function QuizRunner({ quiz, isAuthenticated }: QuizRunnerProps) {
           </div>
 
           <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href="/quizzes/leaderboard"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#22C55E] text-[#050505] font-bold hover:bg-[#22C55E]/90 transition-all shadow-[0_0_15px_rgba(34,197,94,0.3)]"
+            <a
+              href="https://unstop.com/quiz/ai-ml-challenge-2026-foundations-quiz-omnikon-1729546"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#FF3131] text-white font-bold hover:bg-[#FF3131]/90 transition-all shadow-[0_0_15px_rgba(255,49,49,0.3)]"
             >
-              <Trophy className="h-4 w-4" /> VIEW_LEADERBOARD
-            </Link>
+              <ExternalLink className="h-4 w-4" /> COMPETE_ON_UNSTOP
+            </a>
             <Link
               href="/quizzes"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-[#27272A] bg-[#0A0A0A] text-white font-bold hover:border-[#38BDF8] transition-all"
