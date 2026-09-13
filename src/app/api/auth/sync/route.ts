@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { stringToUuid } from '@/lib/utils/uuid';
 
 export async function POST(request: Request) {
   try {
@@ -10,13 +11,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required user parameters' }, { status: 400 });
     }
 
+    // Convert string Firebase UID (e.g., "K6GYlrz4a4eAvJWGJWmtZ7Dqwng1") to valid PostgreSQL UUID
+    const targetUuid = stringToUuid(uid);
+
     const supabaseAdmin = createAdminClient();
 
-    // 1. Check if user profile already exists by id (or uid)
+    // 1. Check if user profile already exists by id
     const { data: existingProfile } = await supabaseAdmin
       .from('profiles')
       .select('id, username, full_name, avatar_url, github_username, role, developer_tier')
-      .eq('id', uid)
+      .eq('id', targetUuid)
       .maybeSingle();
 
     // Derive username from email or displayName or githubUsername
@@ -37,11 +41,11 @@ export async function POST(request: Request) {
     const updatedAvatarUrl = photoURL || existingProfile?.avatar_url || null;
     const updatedGithubUsername = githubUsername || existingProfile?.github_username || null;
 
-    // 2. Upsert profile into Supabase `profiles` table
+    // 2. Upsert profile into Supabase `profiles` table using valid PostgreSQL UUID
     const { data: upsertedProfile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .upsert({
-        id: uid,
+        id: targetUuid,
         username: derivedUsername,
         full_name: updatedFullName,
         avatar_url: updatedAvatarUrl,
@@ -65,8 +69,8 @@ export async function POST(request: Request) {
       githubToken: githubToken || null,
     });
 
-    // Store firebase user id and token in secure cookies so server components can authenticate
-    response.cookies.set('omnikon_user_id', uid, {
+    // Store formatted UUID in secure cookie so server components can query Supabase tables cleanly
+    response.cookies.set('omnikon_user_id', targetUuid, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
