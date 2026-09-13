@@ -7,24 +7,28 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { uid, email, displayName, photoURL, providerId, githubToken, githubUsername } = body;
 
-    if (!uid || !email) {
-      return NextResponse.json({ error: 'Missing required user parameters' }, { status: 400 });
+    if (!uid || typeof uid !== 'string' || !email || typeof email !== 'string') {
+      return NextResponse.json({ error: 'Missing or invalid required user parameters' }, { status: 400 });
     }
 
     // Convert string Firebase UID to valid PostgreSQL UUID
     const targetUuid = stringToUuid(uid);
-
     const supabaseAdmin = createAdminClient();
 
-    // 1. Sync corresponding user record into auth.users (if supported) via RPC or admin insert
+    // 1. Ensure user entry exists in auth.users via Admin API (prevents profiles_id_fkey violation)
     try {
-      await supabaseAdmin.rpc('sync_external_auth_user', {
-        p_id: targetUuid,
-        p_email: email,
-        p_raw_user_meta_data: { full_name: displayName, avatar_url: photoURL },
+      const { error: createUserError } = await supabaseAdmin.auth.admin.createUser({
+        id: targetUuid,
+        email: email.trim().toLowerCase(),
+        email_confirm: true,
+        user_metadata: { full_name: displayName || '', avatar_url: photoURL || '' },
       });
-    } catch (rpcErr) {
-      // Ignore if RPC function does not exist yet on remote instance
+
+      if (createUserError && !createUserError.message.includes('already registered') && !createUserError.message.includes('already exists')) {
+        console.warn('Admin createUser notice:', createUserError.message);
+      }
+    } catch (createErr) {
+      console.warn('Admin createUser exception:', createErr);
     }
 
     // 2. Check if user profile already exists in public.profiles
@@ -34,26 +38,47 @@ export async function POST(request: Request) {
       .eq('id', targetUuid)
       .maybeSingle();
 
-    // Derive username from email or displayName or githubUsername
+    // 3. Derive username safely ensuring unique username constraint is satisfied without collision
     let derivedUsername = existingProfile?.username;
     if (!derivedUsername) {
-      if (githubUsername) {
-        derivedUsername = githubUsername.toLowerCase();
-      } else {
-        const base = (displayName || email.split('@')[0])
-          .toLowerCase()
-          .replace(/[^a-z0-9_]/g, '')
-          .slice(0, 20);
-        derivedUsername = `${base}_${uid.slice(0, 5)}`;
+      const rawBase = githubUsername 
+        ? githubUsername.toLowerCase()
+        : (displayName || email.split('@')[0])
+            .toLowerCase()
+            .replace(/[^a-z0-9_]/g, '')
+            .slice(0, 18);
+
+      const baseUsername = rawBase.length >= 3 ? rawBase : `dev_${rawBase}`;
+      let candidateUsername = `${baseUsername}_${targetUuid.slice(0, 4)}`;
+
+      // Verify username uniqueness to avoid unique constraint violations
+      const { data: usernameOccupied } = await supabaseAdmin
+        .from('profiles')
+        .select('id')
+        .eq('username', candidateUsername)
+        .maybeSingle();
+
+      if (usernameOccupied && usernameOccupied.id !== targetUuid) {
+        candidateUsername = `${baseUsername}_${Date.now().toString(36).slice(-4)}`;
       }
+
+      derivedUsername = candidateUsername;
     }
 
-    const updatedFullName = displayName || existingProfile?.full_name || email.split('@')[0];
-    const updatedAvatarUrl = photoURL || existingProfile?.avatar_url || null;
-    const updatedGithubUsername = githubUsername || existingProfile?.github_username || null;
+    const updatedFullName = (displayName && typeof displayName === 'string') 
+      ? displayName 
+      : existingProfile?.full_name || email.split('@')[0];
 
-    // 3. Upsert profile into Supabase `profiles` table
-    const { data: upsertedProfile, error: profileError } = await supabaseAdmin
+    const updatedAvatarUrl = (photoURL && typeof photoURL === 'string')
+      ? photoURL
+      : existingProfile?.avatar_url || null;
+
+    const updatedGithubUsername = (githubUsername && typeof githubUsername === 'string')
+      ? githubUsername
+      : existingProfile?.github_username || null;
+
+    // 4. Safe upsert into Supabase `profiles` table
+    let upsertResult = await supabaseAdmin
       .from('profiles')
       .upsert({
         id: targetUuid,
@@ -68,15 +93,43 @@ export async function POST(request: Request) {
       .select()
       .single();
 
-    if (profileError) {
-      console.error('Error upserting Supabase profile:', profileError);
-      return NextResponse.json({ error: profileError.message }, { status: 500 });
+    if (upsertResult.error && upsertResult.error.message.includes('profiles_id_fkey')) {
+      console.warn('Handling foreign key constraint fallback...');
+      try {
+        await supabaseAdmin.rpc('sync_external_auth_user', {
+          p_id: targetUuid,
+          p_email: email.trim().toLowerCase(),
+          p_raw_user_meta_data: { full_name: updatedFullName, avatar_url: updatedAvatarUrl },
+        });
+
+        upsertResult = await supabaseAdmin
+          .from('profiles')
+          .upsert({
+            id: targetUuid,
+            username: derivedUsername,
+            full_name: updatedFullName,
+            avatar_url: updatedAvatarUrl,
+            github_username: updatedGithubUsername,
+            role: existingProfile?.role || 'contributor',
+            developer_tier: existingProfile?.developer_tier || 'builder',
+            is_public: true,
+          }, { onConflict: 'id' })
+          .select()
+          .single();
+      } catch (retryErr) {
+        console.error('Retry failed:', retryErr);
+      }
     }
 
-    // 4. Set session cookies for Next.js app session
+    if (upsertResult.error) {
+      console.error('Error upserting Supabase profile:', upsertResult.error);
+      return NextResponse.json({ error: upsertResult.error.message }, { status: 500 });
+    }
+
+    // 5. Set session cookies for Next.js app session
     const response = NextResponse.json({
       success: true,
-      profile: upsertedProfile,
+      profile: upsertResult.data,
       githubToken: githubToken || null,
     });
 
@@ -88,7 +141,7 @@ export async function POST(request: Request) {
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
-    if (githubToken) {
+    if (githubToken && typeof githubToken === 'string') {
       response.cookies.set('github_oauth_token', githubToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
