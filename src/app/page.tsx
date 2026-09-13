@@ -16,6 +16,7 @@ import { StatusBadge } from '@/components/terminal/StatusBadge';
 import { SectionHeader } from '@/components/content/SectionHeader';
 import { IssueSwipeShowcase } from '@/components/showcase/IssueSwipeShowcase';
 import { formatDate, formatNumber } from '@/lib/utils';
+import { OmnikonHeroBanner } from '@/components/showcase/OmnikonHeroBanner';
 import { 
   Terminal, 
   ArrowRight, 
@@ -137,12 +138,6 @@ export default async function HomePage() {
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-[#22C55E] text-[#050505] font-mono-terminal text-xs font-bold hover:bg-[#22C55E]/90 shadow-[0_0_15px_rgba(34,197,94,0.3)] transition-all"
               >
                 <Calendar className="h-4 w-4" /> COMMUNITY_EVENTS
-              </Link>
-              <Link
-                href="/quizzes"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-[#27272A] bg-[#0A0A0A] text-white font-mono-terminal text-xs font-bold hover:border-[#38BDF8] transition-all"
-              >
-                <Zap className="h-4 w-4 text-[#38BDF8]" /> TAKE_A_QUIZ
               </Link>
             </div>
           }
@@ -631,12 +626,6 @@ export default async function HomePage() {
             EXPLORE_HACKATHONS <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
-            href="/quizzes"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#FF3131] text-white font-mono-terminal text-xs font-bold hover:bg-[#FF3131]/90 transition-all shadow-[0_0_20px_rgba(255,49,49,0.3)]"
-          >
-            TAKE_A_QUIZ
-          </Link>
-          <Link
             href="/projects"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#27272A] bg-[#0A0A0A] text-white font-mono-terminal text-xs font-bold hover:border-[#38BDF8] transition-all"
           >
@@ -644,6 +633,9 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
+
+      {/* 9. OMNIKON HERO ANIMATED BANNER VISUAL */}
+      <OmnikonHeroBanner />
     </div>
   );
 }

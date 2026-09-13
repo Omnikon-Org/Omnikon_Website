@@ -40,33 +40,37 @@ export function Navbar() {
   const supabase = createClient();
 
   useEffect(() => {
-    // 1. Check persistent server-side cookie session first
-    fetch('/api/auth/me')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.authenticated && data.user) {
-          setSessionUser(data.user);
-        } else {
-          // Fallback check on browser Supabase auth client
+    const checkAuth = () => {
+      fetch('/api/auth/me')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.authenticated && data.user) {
+            setSessionUser(data.user);
+          } else {
+            supabase.auth.getSession().then(({ data: { session } }) => {
+              setSessionUser(session?.user ?? null);
+            });
+          }
+        })
+        .catch(() => {
           supabase.auth.getSession().then(({ data: { session } }) => {
             setSessionUser(session?.user ?? null);
           });
-        }
-      })
-      .catch(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-          setSessionUser(session?.user ?? null);
         });
-      });
+    };
+
+    checkAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setSessionUser(session.user);
+      } else {
+        checkAuth();
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase]);
+  }, [supabase, pathname]);
 
   const dynamicAuthItem = sessionUser
     ? { name: 'Dashboard', href: '/dashboard', icon: UserIcon }
