@@ -11,12 +11,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required user parameters' }, { status: 400 });
     }
 
-    // Convert string Firebase UID (e.g., "K6GYlrz4a4eAvJWGJWmtZ7Dqwng1") to valid PostgreSQL UUID
+    // Convert string Firebase UID to valid PostgreSQL UUID
     const targetUuid = stringToUuid(uid);
 
     const supabaseAdmin = createAdminClient();
 
-    // 1. Check if user profile already exists by id
+    // 1. Sync corresponding user record into auth.users (if supported) via RPC or admin insert
+    try {
+      await supabaseAdmin.rpc('sync_external_auth_user', {
+        p_id: targetUuid,
+        p_email: email,
+        p_raw_user_meta_data: { full_name: displayName, avatar_url: photoURL },
+      });
+    } catch (rpcErr) {
+      // Ignore if RPC function does not exist yet on remote instance
+    }
+
+    // 2. Check if user profile already exists in public.profiles
     const { data: existingProfile } = await supabaseAdmin
       .from('profiles')
       .select('id, username, full_name, avatar_url, github_username, role, developer_tier')
@@ -41,7 +52,7 @@ export async function POST(request: Request) {
     const updatedAvatarUrl = photoURL || existingProfile?.avatar_url || null;
     const updatedGithubUsername = githubUsername || existingProfile?.github_username || null;
 
-    // 2. Upsert profile into Supabase `profiles` table using valid PostgreSQL UUID
+    // 3. Upsert profile into Supabase `profiles` table
     const { data: upsertedProfile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .upsert({
@@ -62,14 +73,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: profileError.message }, { status: 500 });
     }
 
-    // 3. Create response and set session cookie for Next.js app session
+    // 4. Set session cookies for Next.js app session
     const response = NextResponse.json({
       success: true,
       profile: upsertedProfile,
       githubToken: githubToken || null,
     });
 
-    // Store formatted UUID in secure cookie so server components can query Supabase tables cleanly
     response.cookies.set('omnikon_user_id', targetUuid, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
