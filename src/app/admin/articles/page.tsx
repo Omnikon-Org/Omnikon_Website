@@ -5,6 +5,7 @@ import { TerminalHeader } from '@/components/terminal/TerminalHeader';
 import { StatusBadge } from '@/components/terminal/StatusBadge';
 import { formatDate } from '@/lib/utils';
 import { Plus, Edit, Eye } from 'lucide-react';
+import { SyncArticlesButton } from '@/components/admin/SyncArticlesButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,12 +32,15 @@ export default async function AdminArticlesPage() {
         title="ARTICLE_MANAGEMENT"
         subtitle="Manage engineering blogs, technical tutorials, and draft workflow states."
         action={
-          <Link
-            href="/admin/articles/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FF3131] text-white font-mono-terminal text-xs font-bold hover:bg-[#FF3131]/90 transition-all"
-          >
-            <Plus className="h-4 w-4" /> CREATE_ARTICLE
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <SyncArticlesButton />
+            <Link
+              href="/admin/articles/new"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FF3131] text-white font-mono-terminal text-xs font-bold hover:bg-[#FF3131]/90 transition-all shadow-[0_0_15px_rgba(255,49,49,0.3)]"
+            >
+              <Plus className="h-4 w-4" /> CREATE_ARTICLE
+            </Link>
+          </div>
         }
       />
 

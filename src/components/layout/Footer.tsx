@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Terminal, Github, Disc as Discord, Shield, Heart } from 'lucide-react';
+import { Terminal, Github, Disc as Discord, Linkedin, Twitter, Mail, Shield, Heart } from 'lucide-react';
 import { SITE_CONFIG } from '@/lib/seo/metadata';
 
 export function Footer() {
@@ -22,24 +22,55 @@ export function Footer() {
               Omnikon is an elite developer organization, open-source project ecosystem, hackathon accelerator, and technical knowledge hub built for engineering excellence.
             </p>
 
-            <div className="flex items-center gap-3 pt-2">
+            {/* Social Links */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
               <a
-                href={SITE_CONFIG.githubUrl}
+                href={SITE_CONFIG.linkedinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Omnikon GitHub Organization"
-                className="flex h-9 w-9 items-center justify-center rounded-md border border-[#27272A] bg-[#0A0A0A] text-[#A1A1AA] hover:text-white hover:border-[#FF3131] hover:shadow-[0_0_10px_rgba(255,49,49,0.3)] transition-all"
+                aria-label="Omnikon LinkedIn"
+                className="flex h-9 w-9 items-center justify-center rounded-md border border-[#27272A] bg-[#0A0A0A] text-[#A1A1AA] hover:text-[#38BDF8] hover:border-[#38BDF8] hover:shadow-[0_0_10px_rgba(56,189,248,0.3)] transition-all"
+                title="LinkedIn"
               >
-                <Github className="h-4 w-4" />
+                <Linkedin className="h-4 w-4" />
               </a>
               <a
                 href={SITE_CONFIG.discordUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Omnikon Discord Community"
-                className="flex h-9 w-9 items-center justify-center rounded-md border border-[#27272A] bg-[#0A0A0A] text-[#A1A1AA] hover:text-white hover:border-[#38BDF8] hover:shadow-[0_0_10px_rgba(56,189,248,0.3)] transition-all"
+                className="flex h-9 w-9 items-center justify-center rounded-md border border-[#27272A] bg-[#0A0A0A] text-[#A1A1AA] hover:text-[#5865F2] hover:border-[#5865F2] hover:shadow-[0_0_10px_rgba(88,101,242,0.3)] transition-all"
+                title="Discord"
               >
                 <Discord className="h-4 w-4" />
+              </a>
+              <a
+                href={SITE_CONFIG.twitterUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Omnikon on X (Twitter)"
+                className="flex h-9 w-9 items-center justify-center rounded-md border border-[#27272A] bg-[#0A0A0A] text-[#A1A1AA] hover:text-white hover:border-white hover:shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-all"
+                title="Twitter / X"
+              >
+                <Twitter className="h-4 w-4" />
+              </a>
+              <a
+                href={SITE_CONFIG.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Omnikon GitHub Organization"
+                className="flex h-9 w-9 items-center justify-center rounded-md border border-[#27272A] bg-[#0A0A0A] text-[#A1A1AA] hover:text-white hover:border-[#FF3131] hover:shadow-[0_0_10px_rgba(255,49,49,0.3)] transition-all"
+                title="GitHub"
+              >
+                <Github className="h-4 w-4" />
+              </a>
+              <a
+                href={`mailto:${SITE_CONFIG.contactEmail}`}
+                aria-label="Email Omnikon"
+                className="flex h-9 w-9 items-center justify-center rounded-md border border-[#27272A] bg-[#0A0A0A] text-[#A1A1AA] hover:text-[#22C55E] hover:border-[#22C55E] hover:shadow-[0_0_10px_rgba(34,197,94,0.3)] transition-all"
+                title={`Email: ${SITE_CONFIG.contactEmail}`}
+              >
+                <Mail className="h-4 w-4" />
               </a>
             </div>
           </div>
@@ -62,7 +93,17 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/events" className="hover:text-white transition-colors">
-                  Hackathons & Recaps
+                  Hackathons & Events
+                </Link>
+              </li>
+              <li>
+                <Link href="/calendar" className="hover:text-white transition-colors">
+                  Community Calendar
+                </Link>
+              </li>
+              <li>
+                <Link href="/quizzes" className="hover:text-white transition-colors">
+                  Technical Quizzes
                 </Link>
               </li>
               <li>
@@ -76,22 +117,32 @@ export function Footer() {
           {/* Legal & Governance */}
           <div className="space-y-3">
             <h3 className="font-mono-terminal text-xs font-bold text-white uppercase tracking-widest text-[#38BDF8]">
-              Governance
+              Docs & Governance
             </h3>
             <ul className="space-y-2 font-mono-terminal text-xs">
               <li>
-                <Link href="/docs" className="hover:text-white transition-colors">
-                  Community Guidelines
+                <Link href="/docs#conduct" className="hover:text-white transition-colors">
+                  Code of Conduct
+                </Link>
+              </li>
+              <li>
+                <Link href="/docs#contributing" className="hover:text-white transition-colors">
+                  Contributing Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/docs#privacy" className="hover:text-white transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/docs#license" className="hover:text-white transition-colors">
+                  License (MIT)
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="hover:text-white transition-colors">
                   Contact Support
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="hover:text-white transition-colors">
-                  Privacy Policy
                 </Link>
               </li>
               <li>

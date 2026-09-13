@@ -210,6 +210,145 @@ Official Event Portal: [View on Unstop](https://unstop.com/hackathons/omnikon-na
   ],
 };
 
+/**
+ * Official Uplearn by Upstox Masterclass (Upcoming schedule)
+ */
+export const OFFICIAL_UPSTOX_MASTERCLASS: Event = {
+  id: 'uplearn-by-upstox-masterclass',
+  title: 'Uplearn by Upstox Masterclass',
+  slug: 'uplearn-by-upstox-masterclass',
+  summary: 'Exclusive high-impact masterclass in partnership with Upstox covering financial engineering, algorithmic trading systems, and high-throughput market architecture. Details to be announced.',
+  content_mdx: `# Uplearn by Upstox Masterclass
+
+Omnikon is partnering with Upstox to deliver an exclusive masterclass on real-time systems, financial technology stacks, algorithmic trading infrastructure, and quantitative developer roadmaps.
+
+### Masterclass Highlights
+- **Architecture at Scale:** Low-latency engineering and event-driven market infrastructure.
+- **FinTech Mechanics:** How modern trading systems process millions of ticks per second.
+- **Career Pathways:** Engineering opportunities and core competencies in FinTech.
+
+> **Status:** Event details, speakers, and registration schedule to be announced soon. Stay tuned on Omnikon Discord and official channels!
+`,
+  featured_image: null,
+  event_type: 'workshop',
+  start_date: '2026-10-15T14:00:00Z',
+  end_date: '2026-10-15T17:00:00Z',
+  registration_url: null,
+  status_label: 'Details to be announced',
+  author_id: null,
+  reviewer_id: null,
+  status: 'published',
+  is_featured: true,
+  location_type: 'online',
+  location: 'Online Live Stream & Discord Stage',
+  capacity: 1000,
+  registration_deadline: '2026-10-14T23:59:00Z',
+  prizes: [],
+  resources: [
+    { title: 'Official Upstox Portal', url: 'https://upstox.com' },
+    { title: 'Omnikon Discord Community', url: 'https://discord.com/invite/yWtjK2Tb8T' }
+  ],
+  seo_title: 'Uplearn by Upstox Masterclass — Omnikon Engineering',
+  seo_description: 'High-throughput financial technology and systems engineering masterclass by Omnikon and Upstox. Details to be announced.',
+  og_image: null,
+  canonical_url: '/events/uplearn-by-upstox-masterclass',
+  created_at: '2026-09-01T00:00:00Z',
+  updated_at: '2026-09-08T00:00:00Z',
+  registrations_count: 0,
+};
+
+/**
+ * Official Quiz Events for Calendar and Community Schedule
+ */
+export const OFFICIAL_QUIZ_EVENTS: Event[] = [
+  {
+    id: 'event-frontend-quiz-arena',
+    title: 'Frontend Quiz: Omnikon Quiz Arena',
+    slug: 'frontend-quiz-arena',
+    summary: 'National frontend competition testing HTML5 semantics, modern CSS architecture, ES2024 mechanics, React component patterns, and web vitals on Unstop.',
+    content_mdx: `# Frontend Quiz: Omnikon Quiz Arena
+
+Omnikon's flagship web engineering assessment on Unstop. Validate your technical mastery across modern web standards, JavaScript runtime mechanics, React reconciliation, and performance optimization.
+
+### Assessment Breakdown
+- **DOM & Browser Internals:** Critical rendering path, event loops, layout thrashing.
+- **Modern JavaScript & TypeScript:** Closures, prototypes, async patterns, type safety.
+- **Component Architecture:** State management, memoization, Server Components.
+- **Platform:** Hosted on Unstop with over 1,600+ verified developers registered.
+`,
+    featured_image: null,
+    event_type: 'quiz',
+    start_date: '2026-07-01T00:00:00Z',
+    end_date: '2026-09-30T23:59:59Z',
+    registration_url: 'https://unstop.com/o/1729546',
+    status_label: 'Active on Unstop',
+    author_id: null,
+    reviewer_id: null,
+    status: 'published',
+    is_featured: true,
+    location_type: 'online',
+    location: 'Unstop Competition Arena',
+    capacity: 5000,
+    registration_deadline: '2026-09-30T23:59:00Z',
+    prizes: [
+      { place: 'Top Rankers', amount: 'Certificate of Excellence & Unstop Badge', description: 'Awarded to candidates scoring 85%+' },
+    ],
+    resources: [
+      { title: 'Compete on Unstop', url: 'https://unstop.com/o/1729546' },
+    ],
+    seo_title: 'Frontend Quiz — Omnikon Quiz Arena on Unstop',
+    seo_description: 'Take the official Frontend Quiz Arena on Unstop with 1600+ developers.',
+    og_image: null,
+    canonical_url: '/events/frontend-quiz-arena',
+    created_at: '2026-07-01T00:00:00Z',
+    updated_at: '2026-09-08T00:00:00Z',
+    registrations_count: 1600,
+  },
+  {
+    id: 'event-ai-ml-challenge-2026',
+    title: 'Omnikon AI/ML Challenge 2026: Foundations Quiz',
+    slug: 'ai-ml-challenge-2026',
+    summary: 'National Machine Learning challenge testing neural networks, optimization math, PyTorch/TensorFlow paradigms, and LLM transformer architectures on Unstop.',
+    content_mdx: `# Omnikon AI/ML Challenge 2026: Foundations Quiz
+
+Comprehensive artificial intelligence and machine learning validation challenge hosted on Unstop. Compete against student developers nationwide.
+
+### Core Topic Areas
+- **Machine Learning Foundations:** Supervised/unsupervised algorithms, cost functions, regularizations.
+- **Deep Learning Architectures:** CNNs, RNNs, Backpropagation, Attention mechanisms.
+- **Modern AI & LLMs:** Transformer self-attention, tokenization, parameter-efficient fine-tuning (PEFT).
+- **Platform:** Unstop official competition portal.
+`,
+    featured_image: null,
+    event_type: 'quiz',
+    start_date: '2026-08-15T00:00:00Z',
+    end_date: '2026-10-31T23:59:59Z',
+    registration_url: 'https://unstop.com/quiz/ai-ml-challenge-2026-foundations-quiz-omnikon-1729546',
+    status_label: 'Active on Unstop',
+    author_id: null,
+    reviewer_id: null,
+    status: 'published',
+    is_featured: true,
+    location_type: 'online',
+    location: 'Unstop Competition Arena',
+    capacity: 5000,
+    registration_deadline: '2026-10-31T23:59:00Z',
+    prizes: [
+      { place: 'Top AI Rankers', amount: 'AI Contributor Badge & Unstop Rank', description: 'Awarded to top quartile participants' },
+    ],
+    resources: [
+      { title: 'Join AI/ML Challenge on Unstop', url: 'https://unstop.com/quiz/ai-ml-challenge-2026-foundations-quiz-omnikon-1729546' },
+    ],
+    seo_title: 'Omnikon AI/ML Challenge 2026 Foundations Quiz on Unstop',
+    seo_description: 'National machine learning & neural network quiz on Unstop.',
+    og_image: null,
+    canonical_url: '/events/ai-ml-challenge-2026',
+    created_at: '2026-08-15T00:00:00Z',
+    updated_at: '2026-09-08T00:00:00Z',
+    registrations_count: 850,
+  },
+];
+
 export async function getPublishedEvents(): Promise<Event[]> {
   let dbEvents: Event[] = [];
 
@@ -235,12 +374,34 @@ export async function getPublishedEvents(): Promise<Event[]> {
     console.warn('Failed to fetch events from DB:', err);
   }
 
-  // Replace or merge with official national hackathon
-  const filteredDbEvents = dbEvents.filter(
-    (e) => e.slug !== 'omnikon-hackathon-2026' && e.slug !== 'omnikon-national-hackathon-2026'
-  );
+  // Filter out any mock/fake/removed events and obsolete duplicates
+  const REMOVED_SLUGS_OR_TITLES = [
+    'omnikon-hackathon-2026',
+    'weekly-community-sync',
+    'weekly community open source office hours',
+    'nextjs-15-supabase-masterclass',
+    'next.js 15 & supabase production masterclass',
+  ];
 
-  return [OFFICIAL_OMNIKON_NATIONAL_HACKATHON, ...filteredDbEvents];
+  const filteredDbEvents = dbEvents.filter((e) => {
+    const slugNorm = (e.slug || '').toLowerCase();
+    const titleNorm = (e.title || '').toLowerCase();
+    return !REMOVED_SLUGS_OR_TITLES.some(
+      (term) => slugNorm.includes(term) || titleNorm.includes(term)
+    );
+  });
+
+  return [
+    OFFICIAL_UPSTOX_MASTERCLASS,
+    ...OFFICIAL_QUIZ_EVENTS,
+    OFFICIAL_OMNIKON_NATIONAL_HACKATHON,
+    ...filteredDbEvents.filter(
+      (e) =>
+        e.slug !== OFFICIAL_OMNIKON_NATIONAL_HACKATHON.slug &&
+        e.slug !== OFFICIAL_UPSTOX_MASTERCLASS.slug &&
+        !OFFICIAL_QUIZ_EVENTS.some((q) => q.slug === e.slug)
+    ),
+  ];
 }
 
 export async function getFilteredEvents(
@@ -298,6 +459,15 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
     slug === 'omnikon-hackathon-2026'
   ) {
     return OFFICIAL_OMNIKON_NATIONAL_HACKATHON;
+  }
+
+  if (slug === 'uplearn-by-upstox-masterclass') {
+    return OFFICIAL_UPSTOX_MASTERCLASS;
+  }
+
+  const quizMatch = OFFICIAL_QUIZ_EVENTS.find((q) => q.slug === slug);
+  if (quizMatch) {
+    return quizMatch;
   }
 
   try {

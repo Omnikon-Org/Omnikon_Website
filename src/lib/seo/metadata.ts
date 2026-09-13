@@ -9,8 +9,11 @@ export const SITE_CONFIG = {
   url: 'https://www.omnikonhub.com',
   ogImage: 'https://www.omnikonhub.com/assets/og-image.png',
   githubUrl: 'https://github.com/Omnikon-Org',
-  discordUrl: 'https://discord.gg/omnikon',
-  twitterHandle: '@OmnikonHub',
+  discordUrl: 'https://discord.com/invite/yWtjK2Tb8T',
+  twitterHandle: '@OmnikonOrg',
+  twitterUrl: 'https://x.com/OmnikonOrg',
+  linkedinUrl: 'https://www.linkedin.com/company/omnikon-org',
+  contactEmail: 'contact@omnikonhub.com',
   adSensePublisherId: 'ca-pub-8663425706426895',
 };
 
@@ -97,7 +100,12 @@ export function generateOrganizationJsonLd() {
     alternateName: SITE_CONFIG.name,
     url: SITE_CONFIG.url,
     logo: `${SITE_CONFIG.url}/assets/logo.png`,
-    sameAs: [SITE_CONFIG.githubUrl, SITE_CONFIG.discordUrl],
+    sameAs: [
+      SITE_CONFIG.githubUrl,
+      SITE_CONFIG.discordUrl,
+      SITE_CONFIG.twitterUrl,
+      SITE_CONFIG.linkedinUrl,
+    ],
   };
 }
 
