@@ -25,8 +25,8 @@ export function OmnikonHeroBanner() {
 
     window.addEventListener('resize', handleResize);
 
-    // Particle setup
-    const particlesCount = 45;
+    // Particle setup - reduced count and fixed 80% opacity
+    const particlesCount = 20;
     const particles: { x: number; y: number; vx: number; vy: number; radius: number; color: string; alpha: number }[] = [];
     const colors = ['#FF3131', '#38BDF8', '#22C55E', '#EAB308'];
 
@@ -38,7 +38,7 @@ export function OmnikonHeroBanner() {
         vy: (Math.random() - 0.5) * 0.8,
         radius: Math.random() * 2 + 1,
         color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.6 + 0.2,
+        alpha: 0.8,
       });
     }
 
@@ -73,7 +73,7 @@ export function OmnikonHeroBanner() {
 
           if (dist < 90) {
             ctx.save();
-            ctx.globalAlpha = (1 - dist / 90) * 0.15;
+            ctx.globalAlpha = (1 - dist / 90) * 0.25;
             ctx.strokeStyle = '#FF3131';
             ctx.lineWidth = 0.8;
             ctx.beginPath();
@@ -118,13 +118,13 @@ export function OmnikonHeroBanner() {
 
       {/* Central Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-[260px] sm:min-h-[300px] px-6 py-10 text-center">
-        {/* Holographic Glowing Title */}
+        {/* Solid Glowing Title without gradient */}
         <div className="relative">
-          <h1 className="font-mono-terminal text-5xl sm:text-7xl lg:text-8xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-[#FF3131] via-white to-[#FF3131] drop-shadow-[0_0_25px_rgba(255,49,49,0.7)] select-none">
+          <h1 className="font-mono-terminal text-5xl sm:text-7xl lg:text-8xl font-black tracking-widest text-[#FF3131] opacity-90 drop-shadow-[0_0_25px_rgba(255,49,49,0.8)] select-none">
             OMNIKON
           </h1>
           {/* Subtle Glitch / Glow Underline */}
-          <div className="mx-auto mt-2 h-1 w-3/4 bg-gradient-to-r from-transparent via-[#FF3131] to-transparent rounded-full shadow-[0_0_15px_#FF3131]" />
+          <div className="mx-auto mt-2 h-1 w-3/4 bg-[#FF3131] opacity-80 rounded-full shadow-[0_0_15px_#FF3131]" />
         </div>
 
         <p className="mt-4 font-mono-terminal text-xs sm:text-sm text-[#A1A1AA] tracking-widest uppercase">
