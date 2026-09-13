@@ -86,6 +86,11 @@ export function constructMetadata({
             'max-snippet': -1,
           },
         },
+    icons: {
+      icon: '/logos/LogoOmnikon.jpeg',
+      shortcut: '/logos/LogoOmnikon.jpeg',
+      apple: '/logos/LogoOmnikon.jpeg',
+    },
     other: {
       'google-adsense-account': SITE_CONFIG.adSensePublisherId,
     },

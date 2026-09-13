@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { 
   Terminal, 
@@ -76,8 +77,14 @@ export function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-[#FF3131] rounded-md px-1 py-1 shrink-0">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#27272A] bg-[#0A0A0A] text-[#FF3131] transition-colors group-hover:border-[#FF3131] group-hover:shadow-[0_0_15px_rgba(255,49,49,0.3)]">
-            <Terminal className="h-5 w-5" />
+          <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg border border-[#27272A] bg-[#0A0A0A] transition-colors group-hover:border-[#FF3131] group-hover:shadow-[0_0_15px_rgba(255,49,49,0.3)]">
+            <Image
+              src="/logos/LogoOmnikon.jpeg"
+              alt="Omnikon Logo"
+              width={36}
+              height={36}
+              className="h-full w-full object-cover"
+            />
           </div>
           <div className="flex flex-col">
             <span className="font-mono-terminal text-lg font-extrabold tracking-wider text-white group-hover:text-[#FF3131] transition-colors">
