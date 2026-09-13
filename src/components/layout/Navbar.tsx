@@ -39,12 +39,29 @@ export function Navbar() {
   const supabase = createClient();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSessionUser(session?.user ?? null);
-    });
+    // 1. Check persistent server-side cookie session first
+    fetch('/api/auth/me')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setSessionUser(data.user);
+        } else {
+          // Fallback check on browser Supabase auth client
+          supabase.auth.getSession().then(({ data: { session } }) => {
+            setSessionUser(session?.user ?? null);
+          });
+        }
+      })
+      .catch(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          setSessionUser(session?.user ?? null);
+        });
+      });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSessionUser(session?.user ?? null);
+      if (session?.user) {
+        setSessionUser(session.user);
+      }
     });
 
     return () => subscription.unsubscribe();
