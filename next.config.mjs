@@ -50,6 +50,7 @@ const nextConfig = {
       },
     ];
   },
+  allowedDevOrigins: ['local-origin.dev', 'localhost:3000', 'http://0.254.201.141']
 };
 
 export default nextConfig;

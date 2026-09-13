@@ -1,7 +1,8 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUserSession } from '@/lib/auth/session';
+import { fetchUserGitHubData } from '@/lib/data/userGithub';
 import { getUserContributions } from '@/lib/data/contributions';
 import { getUserRegistrations } from '@/lib/data/registrations';
 import { getPublishedProjects } from '@/lib/data/projects';
@@ -9,7 +10,7 @@ import { TerminalHeader } from '@/components/terminal/TerminalHeader';
 import { GlowCard } from '@/components/content/GlowCard';
 import { ProfileSettings } from '@/components/dashboard/ProfileSettings';
 import { ContributionTimeline } from '@/components/profile/ContributionTimeline';
-import { StatusBadge } from '@/components/terminal/StatusBadge';
+import { IssueSwipePromoCard } from '@/components/promos/IssueSwipePromoCard';
 import { 
   CheckSquare, 
   Square, 
@@ -21,9 +22,11 @@ import {
   Calendar, 
   LayoutGrid, 
   Activity,
-  ArrowRight,
   Sparkles,
-  ExternalLink
+  Github,
+  Star,
+  GitBranch,
+  LogOut
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -31,40 +34,14 @@ export const dynamic = 'force-dynamic';
 const DEVELOPER_JOURNEY_TIERS = ['student', 'learner', 'builder', 'contributor', 'maintainer'];
 
 export default async function MemberDashboardPage() {
-  const supabase = await createClient();
+  const { user, profile, githubToken } = await getCurrentUserSession();
 
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-  if (authError || !user) {
+  if (!user || !profile) {
     redirect('/login');
   }
 
-  // Fetch the user's profile
-  const { data: profile, error: dbError } = await supabase
-    .from('profiles')
-    .select(`
-      id,
-      username,
-      full_name,
-      avatar_url,
-      bio,
-      github_username,
-      discord_username,
-      website_url,
-      role,
-      developer_tier,
-      is_ambassador,
-      skills,
-      technical_interests,
-      is_public,
-      created_at
-    `)
-    .eq('id', user.id)
-    .maybeSingle();
-
-  if (dbError || !profile) {
-    redirect('/login');
-  }
+  // Fetch GitHub live data for the authenticated user
+  const ghData = await fetchUserGitHubData(githubToken, profile.github_username || profile.username);
 
   // Parallel data fetching
   const [contributions, registrations, projects] = await Promise.all([
@@ -80,7 +57,7 @@ export default async function MemberDashboardPage() {
     { label: 'Register Omnikon Account', done: true },
     { label: 'Set Full Name & Username', done: !!(profile.full_name && profile.username) },
     { label: 'Write Bio', done: !!profile.bio },
-    { label: 'Link GitHub Account', done: !!profile.github_username },
+    { label: 'Link GitHub Account', done: !!(profile.github_username || ghData?.username) },
     { label: 'Add Verified Skills', done: !!(profile.skills && profile.skills.length > 0) },
     { label: 'Register for First Event / Hackathon', done: registrations.length > 0 },
   ];
@@ -88,13 +65,13 @@ export default async function MemberDashboardPage() {
   const completedSteps = profileSteps.filter((s) => s.done).length;
   const progressPercent = Math.round((completedSteps / profileSteps.length) * 100);
 
-  const currentTierIndex = DEVELOPER_JOURNEY_TIERS.indexOf(profile.developer_tier);
+  const currentTierIndex = DEVELOPER_JOURNEY_TIERS.indexOf(profile.developer_tier || 'builder');
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 space-y-8 font-mono-terminal text-xs">
       <TerminalHeader
         title="DEVELOPER_DASHBOARD"
-        subtitle={`Welcome to the ecosystem, user_${profile.username}. Access developer tools, contribution history, and hackathons.`}
+        subtitle={`Welcome to the ecosystem, user_${profile.username}. Access developer tools, GitHub stats, and hackathons.`}
         action={
           <div className="flex flex-wrap items-center gap-3">
             <Link
@@ -123,7 +100,7 @@ export default async function MemberDashboardPage() {
             <Sparkles className="h-4 w-4 text-[#FF3131]" /> Developer Journey Progression:
           </span>
           <span className="text-[#A1A1AA]">
-            CURRENT_TIER: <strong className="text-[#22C55E] uppercase">{profile.developer_tier}</strong>
+            CURRENT_TIER: <strong className="text-[#22C55E] uppercase">{profile.developer_tier || 'builder'}</strong>
           </span>
         </div>
 
@@ -149,6 +126,86 @@ export default async function MemberDashboardPage() {
           })}
         </div>
       </div>
+
+      {/* GitHub Real-time Data Section */}
+      {ghData && (
+        <GlowCard accentColor="cyan" className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#27272A] pb-3">
+            <div className="flex items-center gap-3">
+              <Github className="h-5 w-5 text-[#38BDF8]" />
+              <div>
+                <h3 className="font-mono-terminal text-sm font-extrabold text-white uppercase tracking-wider">
+                  GitHub OAuth Data — @{ghData.username}
+                </h3>
+                <p className="text-[11px] text-[#A1A1AA]">
+                  Live repositories, stars, and contribution metrics fetched using GitHub OAuth token.
+                </p>
+              </div>
+            </div>
+            <a
+              href={ghData.htmlUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#38BDF8] hover:underline font-bold text-xs"
+            >
+              Open GitHub Profile &rarr;
+            </a>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="p-3 rounded bg-[#050505] border border-[#27272A]">
+              <span className="text-[#A1A1AA] uppercase text-[10px]">PUBLIC REPOS</span>
+              <p className="text-lg font-bold text-white">{ghData.publicRepos}</p>
+            </div>
+            <div className="p-3 rounded bg-[#050505] border border-[#27272A]">
+              <span className="text-[#A1A1AA] uppercase text-[10px]">FOLLOWERS</span>
+              <p className="text-lg font-bold text-[#38BDF8]">{ghData.followers}</p>
+            </div>
+            <div className="p-3 rounded bg-[#050505] border border-[#27272A]">
+              <span className="text-[#A1A1AA] uppercase text-[10px]">FOLLOWING</span>
+              <p className="text-lg font-bold text-white">{ghData.following}</p>
+            </div>
+            <div className="p-3 rounded bg-[#050505] border border-[#27272A]">
+              <span className="text-[#A1A1AA] uppercase text-[10px]">RECENT EVENTS</span>
+              <p className="text-lg font-bold text-[#22C55E]">{ghData.recentEvents.length}</p>
+            </div>
+          </div>
+
+          {/* User Repositories Preview */}
+          {ghData.repos.length > 0 && (
+            <div className="space-y-2 pt-2">
+              <span className="text-[#A1A1AA] uppercase text-[11px] font-bold">Recent GitHub Repositories:</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                {ghData.repos.slice(0, 3).map((r) => (
+                  <a
+                    key={r.id}
+                    href={r.htmlUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded bg-[#050505] border border-[#27272A] hover:border-[#38BDF8] transition-all space-y-1 block"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-white font-bold truncate">{r.name}</span>
+                      <div className="flex items-center gap-1 text-[#EAB308] text-[10px]">
+                        <Star className="h-3 w-3 fill-current" /> {r.stargazersCount}
+                      </div>
+                    </div>
+                    {r.description && (
+                      <p className="text-[11px] text-[#A1A1AA] line-clamp-1">{r.description}</p>
+                    )}
+                    {r.language && (
+                      <span className="inline-block text-[10px] text-[#38BDF8] uppercase">{r.language}</span>
+                    )}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </GlowCard>
+      )}
+
+      {/* Promoted IssuesSwipe Tool Card */}
+      <IssueSwipePromoCard />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left 2 Columns: Onboarding, Settings & Activity */}
@@ -216,12 +273,12 @@ export default async function MemberDashboardPage() {
           </div>
         </div>
 
-        {/* Right Column: User Journey Status / Registered Events / Recommended Projects */}
+        {/* Right Column: Credentials / Events / Recommended Projects */}
         <div className="space-y-6">
           {/* Developer Credentials Card */}
           <GlowCard accentColor="green" className="space-y-4">
             <h3 className="font-mono-terminal text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
-              <User className="h-4 w-4 text-[#EAB308]" /> Developer Credentials
+              <User className="h-4 w-4 text-[#EAB308]" /> Supabase User Profile
             </h3>
 
             <div className="space-y-3 pt-2 border-t border-[#27272A]">
@@ -272,11 +329,6 @@ export default async function MemberDashboardPage() {
                     </Link>
                   </div>
                 ))}
-                {registrations.length > 3 && (
-                  <Link href="/dashboard/events" className="block text-center text-[#38BDF8] hover:underline pt-1">
-                    View All {registrations.length} Registrations &rarr;
-                  </Link>
-                )}
               </div>
             )}
           </GlowCard>
@@ -311,39 +363,6 @@ export default async function MemberDashboardPage() {
                 ))}
               </div>
             )}
-          </GlowCard>
-
-          {/* Quick Links Card */}
-          <GlowCard className="space-y-3">
-            <h3 className="font-mono-terminal text-xs font-extrabold text-white uppercase tracking-wider">
-              Ecosystem Navigation
-            </h3>
-            <div className="space-y-2">
-              <Link href="/activity" className="flex items-center justify-between p-2 rounded bg-[#050505] hover:bg-[#121212] transition-colors border border-[#27272A]">
-                <span className="flex items-center gap-2 text-white">
-                  <Activity className="h-4 w-4 text-[#38BDF8]" /> Community Activity
-                </span>
-                <ChevronRight className="h-4 w-4 text-[#A1A1AA]" />
-              </Link>
-              <Link href="/blogs" className="flex items-center justify-between p-2 rounded bg-[#050505] hover:bg-[#121212] transition-colors border border-[#27272A]">
-                <span className="flex items-center gap-2 text-white">
-                  <BookOpen className="h-4 w-4 text-[#FF3131]" /> Technical Blogs
-                </span>
-                <ChevronRight className="h-4 w-4 text-[#A1A1AA]" />
-              </Link>
-              <Link href="/projects" className="flex items-center justify-between p-2 rounded bg-[#050505] hover:bg-[#121212] transition-colors border border-[#27272A]">
-                <span className="flex items-center gap-2 text-white">
-                  <Code className="h-4 w-4 text-[#22C55E]" /> Projects Directory
-                </span>
-                <ChevronRight className="h-4 w-4 text-[#A1A1AA]" />
-              </Link>
-              <Link href="/events" className="flex items-center justify-between p-2 rounded bg-[#050505] hover:bg-[#121212] transition-colors border border-[#27272A]">
-                <span className="flex items-center gap-2 text-white">
-                  <Calendar className="h-4 w-4 text-[#EAB308]" /> Hackathons
-                </span>
-                <ChevronRight className="h-4 w-4 text-[#A1A1AA]" />
-              </Link>
-            </div>
           </GlowCard>
         </div>
       </div>

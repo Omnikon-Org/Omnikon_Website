@@ -11,6 +11,7 @@ import { TerminalHeader } from '@/components/terminal/TerminalHeader';
 import { GlowCard } from '@/components/content/GlowCard';
 import { StatusBadge } from '@/components/terminal/StatusBadge';
 import { ContributionTimeline } from '@/components/profile/ContributionTimeline';
+import { IssueSwipePromoCard } from '@/components/promos/IssueSwipePromoCard';
 import { formatDate } from '@/lib/utils';
 import { 
   Github, 
@@ -240,6 +241,9 @@ export default async function ProfileDetailPage({ params }: ProfilePageProps) {
           )}
         </div>
       </GlowCard>
+
+      {/* Promoted IssueSwipe Tool Card */}
+      <IssueSwipePromoCard />
 
       {/* Public Contribution History */}
       <section className="space-y-4">
