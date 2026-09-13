@@ -8,6 +8,8 @@ import { EmptyState } from '@/components/content/EmptyState';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { Radio, RefreshCw } from 'lucide-react';
 
+import { ActivityAnnouncementSection } from '@/components/activity/ActivityAnnouncementSection';
+
 export const revalidate = 180; // Revalidate every 3 minutes
 
 export const metadata: Metadata = constructMetadata({
@@ -41,6 +43,9 @@ export default async function ActivityFeedPage() {
           <span>{contributions.length} EVENTS STREAMED</span>
         </div>
       </div>
+
+      {/* Co-founder & Core Member Announcement Console */}
+      <ActivityAnnouncementSection />
 
       {contributions.length === 0 ? (
         <EmptyState

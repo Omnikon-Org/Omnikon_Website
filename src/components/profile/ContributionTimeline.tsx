@@ -12,7 +12,8 @@ import {
   Sparkles, 
   ExternalLink,
   Code2,
-  User
+  User,
+  Megaphone
 } from 'lucide-react';
 
 interface ContributionTimelineProps {
@@ -32,6 +33,8 @@ export function ContributionTimeline({ contributions = [] }: ContributionTimelin
 
   const getContributionIcon = (type: string) => {
     switch (type) {
+      case 'community_announcement':
+        return <Megaphone className="h-4 w-4 text-[#FF3131]" />;
       case 'github_pr':
         return <GitPullRequest className="h-4 w-4 text-[#38BDF8]" />;
       case 'issue_contribution':
@@ -51,6 +54,8 @@ export function ContributionTimeline({ contributions = [] }: ContributionTimelin
 
   const getBadgeColor = (type: string) => {
     switch (type) {
+      case 'community_announcement':
+        return 'border-[#FF3131]/40 bg-[#FF3131]/10 text-[#FF3131] font-extrabold shadow-[0_0_10px_rgba(255,49,49,0.2)]';
       case 'github_pr':
         return 'border-[#38BDF8]/40 bg-[#38BDF8]/10 text-[#38BDF8]';
       case 'issue_contribution':

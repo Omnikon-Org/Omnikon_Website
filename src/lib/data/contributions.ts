@@ -119,7 +119,47 @@ export async function getPublicContributions(limit = 30): Promise<Contribution[]
   const ghEvents = await getOmnikonLiveEvents();
   const mappedGhContributions = ghEvents.map(mapGitHubEventToContribution);
 
-  const merged = [...dbContributions, ...mappedGhContributions];
+  // Fetch published updates/announcements from updates table
+  let updateContributions: Contribution[] = [];
+  try {
+    const supabase = createPublicClient();
+    const { data: updates } = await supabase
+      .from('updates')
+      .select(`
+        *,
+        author:profiles!updates_author_id_fkey(id, username, full_name, avatar_url, role, developer_tier)
+      `)
+      .eq('status', 'published')
+      .order('published_at', { ascending: false });
+
+    if (updates && updates.length > 0) {
+      updateContributions = updates.map((u) => ({
+        id: `update-${u.id}`,
+        user_id: u.author_id || 'system',
+        project_id: null,
+        event_id: null,
+        type: 'community_announcement',
+        title: u.title,
+        description: u.content_mdx,
+        external_url: u.link_url || null,
+        metadata: { updateId: u.id },
+        is_public: true,
+        created_at: u.published_at || u.created_at,
+        user: u.author || {
+          username: 'Omnikon Team',
+          full_name: 'Omnikon Co-Founders',
+          role: 'admin',
+          developer_tier: 'maintainer',
+        },
+        project: null,
+        event: null,
+      }));
+    }
+  } catch (e) {
+    console.warn('Failed to fetch update announcements:', e);
+  }
+
+  const merged = [...dbContributions, ...updateContributions, ...mappedGhContributions];
 
   // Sort by latest created_at
   merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
