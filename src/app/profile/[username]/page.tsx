@@ -124,6 +124,7 @@ export default async function ProfileDetailPage({ params }: ProfilePageProps) {
                   alt={profile.full_name}
                   width={80}
                   height={80}
+                  unoptimized
                   className="h-full w-full object-cover"
                 />
               ) : (
