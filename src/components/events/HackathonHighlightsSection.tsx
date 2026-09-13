@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { 
   Trophy, 
   Crown, 
@@ -240,8 +241,18 @@ export function HackathonHighlightsSection({
               <div className="inline-flex h-8 w-8 rounded-full bg-[#A1A1AA] text-black font-mono-terminal font-bold items-center justify-center text-sm shadow-md">
                 2
               </div>
-              <div className="h-16 w-16 mx-auto rounded-full border-2 border-[#A1A1AA] bg-[#27272A] flex items-center justify-center font-mono-terminal text-lg font-bold text-white">
-                SP
+              <div className="h-16 w-16 mx-auto rounded-full border-2 border-[#A1A1AA] bg-[#27272A] flex items-center justify-center overflow-hidden font-mono-terminal text-lg font-bold text-white shadow-md">
+                {topAmbassadors[1].avatarUrl ? (
+                  <Image
+                    src={topAmbassadors[1].avatarUrl}
+                    alt={topAmbassadors[1].name}
+                    width={64}
+                    height={64}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  'SP'
+                )}
               </div>
               <h4 className="font-mono-terminal text-base font-bold text-white">
                 {topAmbassadors[1].name}
@@ -266,8 +277,18 @@ export function HackathonHighlightsSection({
               <div className="inline-flex h-9 w-9 rounded-full bg-[#EAB308] text-black font-mono-terminal font-black items-center justify-center text-base shadow-lg">
                 1
               </div>
-              <div className="h-20 w-20 mx-auto rounded-full border-2 border-[#EAB308] bg-[#1E1605] flex items-center justify-center font-mono-terminal text-xl font-bold text-[#EAB308]">
-                H
+              <div className="h-20 w-20 mx-auto rounded-full border-2 border-[#EAB308] bg-[#1E1605] flex items-center justify-center overflow-hidden font-mono-terminal text-xl font-bold text-[#EAB308] shadow-lg">
+                {topAmbassadors[0].avatarUrl ? (
+                  <Image
+                    src={topAmbassadors[0].avatarUrl}
+                    alt={topAmbassadors[0].name}
+                    width={80}
+                    height={80}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  'H'
+                )}
               </div>
               <h4 className="font-mono-terminal text-lg font-extrabold text-white">
                 {topAmbassadors[0].name}
@@ -289,8 +310,18 @@ export function HackathonHighlightsSection({
               <div className="inline-flex h-8 w-8 rounded-full bg-[#B45309] text-white font-mono-terminal font-bold items-center justify-center text-sm shadow-md">
                 3
               </div>
-              <div className="h-16 w-16 mx-auto rounded-full border-2 border-[#B45309] bg-[#271C12] flex items-center justify-center font-mono-terminal text-lg font-bold text-white">
-                MP
+              <div className="h-16 w-16 mx-auto rounded-full border-2 border-[#B45309] bg-[#271C12] flex items-center justify-center overflow-hidden font-mono-terminal text-lg font-bold text-white shadow-md">
+                {topAmbassadors[2].avatarUrl ? (
+                  <Image
+                    src={topAmbassadors[2].avatarUrl}
+                    alt={topAmbassadors[2].name}
+                    width={64}
+                    height={64}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  'MP'
+                )}
               </div>
               <h4 className="font-mono-terminal text-base font-bold text-white">
                 {topAmbassadors[2].name}

@@ -17,8 +17,8 @@ export interface AmbassadorLeaderboardEntry {
   rank: number;
   name: string;
   referrals: number;
-  avatarUrl?: string;
   isTopThree?: boolean;
+  avatarUrl?: string;
 }
 
 export interface HackathonWinner {
@@ -196,9 +196,9 @@ Official Event Portal: [View on Unstop](https://unstop.com/hackathons/omnikon-na
     },
   ],
   ambassadors: [
-    { rank: 1, name: 'Harsh', referrals: 112, isTopThree: true },
-    { rank: 2, name: 'Srija Pathrala', referrals: 88, isTopThree: true },
-    { rank: 3, name: 'Meenal Pandey', referrals: 73, isTopThree: true },
+    { rank: 1, name: 'Harsh', referrals: 112, isTopThree: true, avatarUrl: '/images/Harsh.png' },
+    { rank: 2, name: 'Srija Pathrala', referrals: 88, isTopThree: true, avatarUrl: '/images/srija.png' },
+    { rank: 3, name: 'Meenal Pandey', referrals: 73, isTopThree: true, avatarUrl: '/images/Meenal.png' },
     { rank: 4, name: 'Mohit Agarwal', referrals: 52 },
     { rank: 5, name: 'Anchal Yadav', referrals: 35 },
     { rank: 6, name: 'Vedant Singh', referrals: 30 },
