@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/publicServer';
 import type { Profile } from './profiles';
 import { getOmnikonOrgRepos, type GitHubOrgRepo } from './github';
 
@@ -107,7 +107,7 @@ export async function getPublishedProjects(options?: {
   let dbProjects: Project[] = [];
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     let query = supabase
       .from('projects')
       .select(`
@@ -171,7 +171,7 @@ export async function getPublishedProjects(options?: {
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data } = await supabase
       .from('projects')
       .select(`

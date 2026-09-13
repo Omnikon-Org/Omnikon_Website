@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/publicServer';
 import type { Profile } from './profiles';
 import { getOmnikonLiveEvents, type GitHubLiveEvent } from './github';
 
@@ -94,7 +95,7 @@ export async function getPublicContributions(limit = 30): Promise<Contribution[]
   let dbContributions: Contribution[] = [];
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from('contributions')
       .select(`

@@ -8,7 +8,7 @@ import { EmptyState } from '@/components/content/EmptyState';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { Radio, RefreshCw } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 180; // Revalidate every 3 minutes
 
 export const metadata: Metadata = constructMetadata({
   title: 'Live Community Activity & Ecosystem Feed',

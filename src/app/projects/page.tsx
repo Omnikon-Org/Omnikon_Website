@@ -7,7 +7,7 @@ import { ProjectsExplorer } from '@/components/projects/ProjectsExplorer';
 import { IssueSwipeShowcase } from '@/components/showcase/IssueSwipeShowcase';
 import { AdSlot } from '@/components/ads/AdSlot';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 900; // Revalidate every 15 minutes
 
 export const metadata: Metadata = constructMetadata({
   title: 'Native Open Source Projects Explorer',
