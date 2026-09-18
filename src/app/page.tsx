@@ -39,7 +39,7 @@ import {
   Award
 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = constructMetadata({
   title: 'Omnikon — Student-Powered Open-Source Developer Community',

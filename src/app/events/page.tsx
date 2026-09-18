@@ -25,7 +25,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = constructMetadata({
   title: 'Community Events, Hackathons & Workshops',

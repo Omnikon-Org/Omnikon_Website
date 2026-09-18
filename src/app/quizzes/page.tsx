@@ -23,7 +23,7 @@ import {
   Compass
 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = constructMetadata({
   title: 'Technical Quizzes & Competitions',

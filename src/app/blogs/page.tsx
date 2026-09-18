@@ -12,7 +12,7 @@ import { AdSlot } from '@/components/ads/AdSlot';
 import { formatDate } from '@/lib/utils';
 import { Clock, User, Tag as TagIcon, Search, ArrowRight } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = constructMetadata({
   title: 'Engineering Blogs & Technical Tutorials',

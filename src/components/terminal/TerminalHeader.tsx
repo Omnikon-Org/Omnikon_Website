@@ -37,7 +37,7 @@ export function TerminalHeader({ title, subtitle, action }: TerminalHeaderProps)
             {title}
           </h1>
           {subtitle && (
-            <p className="font-mono-terminal text-sm text-[#A1A1AA] max-w-2xl leading-relaxed">
+            <p className="font-mono-terminal text-sm text-[#A1A1AA] max-w-2xl leading-relaxed min-h-[2.5rem]">
               {subtitle}
             </p>
           )}
